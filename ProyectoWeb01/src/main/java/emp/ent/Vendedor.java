@@ -40,5 +40,5 @@ public class Vendedor extends Persona {
 	public void setNumeroDocumento(String numeroDocumento) {
 		this.numeroDocumento = numeroDocumento;
 	}
-	
+
 }

@@ -1,15 +1,17 @@
 package emp.srv;
 
+import java.io.IOException;
+
+import emp.jpa.VendedorJPA;
+import emp.uti.Utilidades;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
-import jakarta.persistence.*;
-import emp.jpa.VendedorJPA;
-import emp.uti.Utilidades;
 
 /**
  * Servlet implementation class RegistroVendedores
@@ -17,7 +19,7 @@ import emp.uti.Utilidades;
 @WebServlet("/RegistroVendedores")
 public class RegistroVendedores extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -29,12 +31,13 @@ public class RegistroVendedores extends HttpServlet {
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("ProyectoWeb01");
 		EntityManager em = emf.createEntityManager();
 		try {
-			em.getTransaction();
+			em.getTransaction().begin();
 			VendedorJPA objVendedor = new VendedorJPA();
 			objVendedor.setNombre(request.getParameter("nombre"));
 			objVendedor.setDireccion(request.getParameter("direccion"));
@@ -47,7 +50,7 @@ public class RegistroVendedores extends HttpServlet {
 			request.setAttribute("direccion", "**" + objVendedor.getDireccion());
 			request.setAttribute("tipodocumento", "**" + objVendedor.getTipoDocumento());
 			request.setAttribute("numerodocumento", "**" + objVendedor.getNumeroDocumento());
-			
+
 			request.getRequestDispatcher("formulario.jsp").forward(request, response);
 
 		} catch (Exception e) {
@@ -57,13 +60,14 @@ public class RegistroVendedores extends HttpServlet {
 			em.close();
 			emf.close();
 		}
-		
+
 		//response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);

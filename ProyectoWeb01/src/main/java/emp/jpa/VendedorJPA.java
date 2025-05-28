@@ -12,11 +12,11 @@ import jakarta.persistence.Table;
 @Table(name="vendedores")
 public class VendedorJPA implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
-	
+
 	private String nombre;
 	private String direccion;
 	private int tipoDocumento;
@@ -87,7 +87,4 @@ public class VendedorJPA implements Serializable {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
-	
-	
-
 }
