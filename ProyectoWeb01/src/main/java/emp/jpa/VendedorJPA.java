@@ -8,6 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+//Este es el JPA de Vendedores
+
 @Entity
 @Table(name="vendedores")
 public class VendedorJPA implements Serializable {
