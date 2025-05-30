@@ -34,6 +34,7 @@ public class RegistroVendedores extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// Acá solo se deben hacer llamadas a funcionalidades encapsuladas en otras clases.
+		// -------------------------------------------------------------------------------
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("ProyectoWeb01");
 		EntityManager em = emf.createEntityManager();
 		try {
