@@ -7,16 +7,16 @@
     <display-name>ProyectoWeb01</display-name>
     
     <servlet>
-        <servlet-name>registroVendedores</servlet-name>
-        <servlet-class>emp.srv.RegistroVendedores</servlet-class>
+        <servlet-name>moduloVentas</servlet-name>
+        <servlet-class>emp.srv.ModuloVentas</servlet-class>
     </servlet>
     
     <servlet-mapping>
-        <servlet-name>registroVendedores</servlet-name>
-        <url-pattern>/registroVendedores</url-pattern>
+        <servlet-name>moduloVentas</servlet-name>
+        <url-pattern>/moduloVentas</url-pattern>
     </servlet-mapping>
 
     <welcome-file-list>
-        <welcome-file>formulario.jsp</welcome-file>
+        <welcome-file>menu.html</welcome-file>
     </welcome-file-list>
 </web-app>

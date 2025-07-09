@@ -6,8 +6,11 @@
                         https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
     <persistence-unit name="ProyectoWeb01" transaction-type="RESOURCE_LOCAL">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
- 
 <!-- 
+        <class>lab.jpa.Examen</class>
+        <class>far.jpa.Productos</class>
+        <class>atm.jpa.HistoriaClinica</class>
+        <class>emp.jpa.PlanContable</class>
         <class>emp.jpa.VendedorJPA</class>
 -->
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
@@ -15,7 +18,7 @@
         <properties>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/myDB" />
             <property name="jakarta.persistence.jdbc.user" value="root" />
-            <property name="jakarta.persistence.jdbc.password" value="" />
+            <property name="jakarta.persistence.jdbc.password" value="1234" />
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
 
             <property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>
