@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Acceso - Módulo Farmacia</title>
+  <link rel="stylesheet" href="estilos_farmacia.css">
+  <style>
+    /* Estilos específicos para login */
+    body {
+      background: linear-gradient(135deg, rgba(227, 242, 253, 0.9) 0%, rgba(187, 222, 251, 0.9) 50%, rgba(144, 202, 249, 0.9) 100%),
+                  url('https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(21, 101, 192, 0.2);
+      border: 2px solid rgba(144, 202, 249, 0.3);
+      max-width: 450px;
+      width: 90%;
+      animation: fadeInUp 0.8s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .login-logo {
+      font-size: 60px;
+      margin-bottom: 10px;
+      display: block;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .login-title {
+      font-size: 28px;
+      color: #1565c0;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    .login-subtitle {
+      color: #42a5f5;
+      font-size: 16px;
+      margin-bottom: 0;
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #1565c0;
+      font-size: 14px;
+    }
+
+    .form-input {
+      padding: 15px 20px;
+      border: 2px solid rgba(144, 202, 249, 0.4);
+      border-radius: 10px;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #1565c0;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #64b5f6;
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0 0 0 3px rgba(100, 181, 246, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: #90a4ae;
+    }
+
+    .login-button {
+      background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
+      color: white;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(100, 181, 246, 0.3);
+      margin-top: 10px;
+    }
+
+    .login-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(100, 181, 246, 0.4);
+      background: linear-gradient(135deg, #42a5f5 0%, #2196f3 100%);
+    }
+
+    .login-button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .login-footer {
+      text-align: center;
+      margin-top: 25px;
+      color: #42a5f5;
+      font-size: 14px;
+    }
+
+    .error-message {
+      background: rgba(244, 67, 54, 0.1);
+      color: #d32f2f;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(244, 67, 54, 0.3);
+      font-size: 14px;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    .success-message {
+      background: rgba(76, 175, 80, 0.1);
+      color: #2e7d32;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(76, 175, 80, 0.3);
+      font-size: 14px;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .login-container {
+        padding: 30px 20px;
+        margin: 20px;
+      }
+
+      .login-logo {
+        font-size: 50px;
+      }
+
+      .login-title {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <div class="login-header">
+      <span class="login-logo">🏥</span>
+      <h1 class="login-title">Módulo Farmacia</h1>
+      <p class="login-subtitle">Clínica Integrada</p>
+    </div>
+
+    <div id="errorMessage" class="error-message"></div>
+    <div id="successMessage" class="success-message"></div>
+
+    <form class="login-form" onsubmit="iniciarSesion(event)">
+      <div class="form-group">
+        <label class="form-label" for="usuario">👤 Usuario</label>
+        <input 
+          type="text" 
+          id="usuario" 
+          name="usuario" 
+          class="form-input" 
+          placeholder="Ingrese su usuario"
+          required
+          autocomplete="username"
+        >
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">🔒 Contraseña</label>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          class="form-input" 
+          placeholder="Ingrese su contraseña"
+          required
+          autocomplete="current-password"
+        >
+      </div>
+
+      <button type="submit" class="login-button" id="loginBtn">
+        🚪 Iniciar Sesión
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p>Sistema de Gestión Farmacéutica v1.0</p>
+    </div>
+  </div>
+
+  <script>
+    function iniciarSesion(event) {
+      event.preventDefault();
+      
+      const usuario = document.getElementById('usuario').value;
+      const password = document.getElementById('password').value;
+      const button = document.getElementById('loginBtn');
+      const errorMessage = document.getElementById('errorMessage');
+      const successMessage = document.getElementById('successMessage');
+      
+      // Limpiar mensajes anteriores
+      errorMessage.style.display = 'none';
+      successMessage.style.display = 'none';
+      
+      // Cambiar estado del botón
+      button.textContent = '🔄 Verificando...';
+      button.disabled = true;
+      
+      // Simular validación (aquí iría la conexión real a la base de datos)
+      setTimeout(() => {
+        if (usuario === 'admin' && password === 'admin123') {
+          successMessage.textContent = '✅ Acceso concedido. Redirigiendo...';
+          successMessage.style.display = 'block';
+          
+          // Simular guardado de sesión
+          sessionStorage.setItem('farmaceutico', JSON.stringify({
+            nombre: 'admin',
+            usuario: 'admin',
+            rol: 'administrador'
+          }));
+          
+          setTimeout(() => {
+            window.location.href = 'dashboard_farmacia.html';
+          }, 1500);
+          
+        } else {
+          errorMessage.textContent = '❌ Usuario o contraseña incorrectos';
+          errorMessage.style.display = 'block';
+          
+          button.textContent = '🚪 Iniciar Sesión';
+          button.disabled = false;
+        }
+      }, 1500);
+    }
+
+    // Efecto de entrada suave
+    document.addEventListener('DOMContentLoaded', function() {
+      const inputs = document.querySelectorAll('.form-input');
+      inputs.forEach((input, index) => {
+        input.style.opacity = '0';
+        input.style.transform = 'translateX(-20px)';
+        
+        setTimeout(() => {
+          input.style.transition = 'all 0.5s ease';
+          input.style.opacity = '1';
+          input.style.transform = 'translateX(0)';
+        }, index * 100 + 300);
+      });
+    });
+  </script>
+
+</body>
+</html>

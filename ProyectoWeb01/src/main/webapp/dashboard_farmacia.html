@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard - Módulo Farmacia</title>
+  <link rel="stylesheet" href="estilos_farmacia.css">
+  <style>
+    /* Estilos específicos para dashboard */
+    .dashboard-header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 20px 0;
+      box-shadow: 0 2px 15px rgba(21, 101, 192, 0.1);
+      border-bottom: 2px solid rgba(144, 202, 249, 0.3);
+      margin-bottom: 30px;
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo-section h1 {
+      font-size: 28px;
+      font-weight: 600;
+      color: #1565c0;
+      margin: 0;
+    }
+
+    .user-section {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(144, 202, 249, 0.2);
+      padding: 10px 15px;
+      border-radius: 10px;
+      border: 1px solid rgba(144, 202, 249, 0.4);
+    }
+
+    .user-info strong {
+      color: #1565c0;
+    }
+
+    .logout-btn {
+      background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 10px rgba(244, 67, 54, 0.3);
+    }
+
+    .logout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(244, 67, 54, 0.4);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 6px 25px rgba(21, 101, 192, 0.1);
+      border: 1px solid rgba(144, 202, 249, 0.3);
+      transition: transform 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #64b5f6, #42a5f5);
+    }
+
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .stat-icon {
+      font-size: 40px;
+      opacity: 0.8;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1565c0;
+    }
+
+    .stat-label {
+      color: #42a5f5;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .module-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 6px 25px rgba(21, 101, 192, 0.1);
+      border: 1px solid rgba(144, 202, 249, 0.3);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .module-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(21, 101, 192, 0.2);
+    }
+
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(100, 181, 246, 0.1), rgba(66, 165, 245, 0.1));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .module-card:hover::before {
+      opacity: 1;
+    }
+
+    .module-icon {
+      font-size: 50px;
+      margin-bottom: 15px;
+      display: block;
+      text-align: center;
+    }
+
+    .module-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1565c0;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .module-description {
+      color: #42a5f5;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .recent-activity {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 6px 25px rgba(21, 101, 192, 0.1);
+      border: 1px solid rgba(144, 202, 249, 0.3);
+    }
+
+    .activity-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid rgba(144, 202, 249, 0.2);
+    }
+
+    .activity-icon {
+      font-size: 24px;
+      margin-right: 10px;
+      background: rgba(144, 202, 249, 0.3);
+      padding: 8px;
+      border-radius: 8px;
+    }
+
+    .activity-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1565c0;
+    }
+
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      background: rgba(227, 242, 253, 0.5);
+      border-radius: 10px;
+      border: 1px solid rgba(144, 202, 249, 0.3);
+    }
+
+    .activity-item-icon {
+      font-size: 20px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(144, 202, 249, 0.3);
+      border-radius: 8px;
+    }
+
+    .activity-item-content {
+      flex: 1;
+    }
+
+    .activity-item-title {
+      font-weight: 600;
+      color: #1565c0;
+      font-size: 14px;
+    }
+
+    .activity-item-time {
+      color: #42a5f5;
+      font-size: 12px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .modules-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .module-card {
+        padding: 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-header">
+    <div class="header-content">
+      <div class="logo-section">
+        <span style="font-size: 40px;">🏥</span>
+        <h1>Módulo Farmacia</h1>
+      </div>
+      <div class="user-section">
+        <div class="user-info">
+          <span>👤</span>
+          <strong id="nombreUsuario">Farmacéutico</strong>
+        </div>
+        <button class="logout-btn" onclick="cerrarSesion()">
+          🚪 Cerrar Sesión
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <!-- Estadísticas rápidas -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon">💊</div>
+          <div class="stat-value">247</div>
+        </div>
+        <div class="stat-label">Productos en Stock</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon">📋</div>
+          <div class="stat-value">15</div>
+        </div>
+        <div class="stat-label">Recetas Hoy</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon">💰</div>
+          <div class="stat-value">S/ 2,450</div>
+        </div>
+        <div class="stat-label">Ventas del Día</div>
+      </div>
+      
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon">⚠️</div>
+          <div class="stat-value">8</div>
+        </div>
+        <div class="stat-label">Stock Bajo</div>
+      </div>
+    </div>
+
+    <!-- Módulos principales -->
+    <div class="modules-grid">
+      <a href="venta_receta.html" class="module-card">
+        <span class="module-icon">📋</span>
+        <h3 class="module-title">Venta por Receta</h3>
+        <p class="module-description">
+          Dispense medicamentos siguiendo prescripciones médicas registradas en el sistema
+        </p>
+      </a>
+
+      <a href="venta_sin_receta.html" class="module-card">
+        <span class="module-icon">🛒</span>
+        <h3 class="module-title">Venta sin Receta</h3>
+        <p class="module-description">
+          Venta directa de medicamentos OTC y productos farmacéuticos
+        </p>
+      </a>
+
+      <a href="inventario.html" class="module-card">
+        <span class="module-icon">📦</span>
+        <h3 class="module-title">Inventario</h3>
+        <p class="module-description">
+          Gestión de stock, lotes, vencimientos y control de productos
+        </p>
+      </a>
+
+      <a href="reportes.html" class="module-card">
+        <span class="module-icon">📊</span>
+        <h3 class="module-title">Reportes</h3>
+        <p class="module-description">
+          Informes de ventas, inventario y estadísticas farmacéuticas
+        </p>
+      </a>
+
+      <a href="configuracion.html" class="module-card">
+        <span class="module-icon">⚙️</span>
+        <h3 class="module-title">Configuración</h3>
+        <p class="module-description">
+          Configuración del sistema, usuarios y parámetros generales
+        </p>
+      </a>
+
+      <a href="proveedores.html" class="module-card">
+        <span class="module-icon">🏢</span>
+        <h3 class="module-title">Proveedores</h3>
+        <p class="module-description">
+          Gestión de proveedores, pedidos y compras de medicamentos
+        </p>
+      </a>
+    </div>
+
+    <!-- Actividad reciente -->
+    <div class="recent-activity">
+      <div class="activity-header">
+        <span class="activity-icon">📈</span>
+        <h3 class="activity-title">Actividad Reciente</h3>
+      </div>
+      <div class="activity-list">
+        <div class="activity-item">
+          <div class="activity-item-icon">💊</div>
+          <div class="activity-item-content">
+            <div class="activity-item-title">Venta de Amoxicilina 500mg - REC-001</div>
+            <div class="activity-item-time">Hace 15 minutos</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-item-icon">🛒</div>
+          <div class="activity-item-content">
+            <div class="activity-item-title">Venta sin receta - Paracetamol 500mg</div>
+            <div class="activity-item-time">Hace 32 minutos</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-item-icon">📦</div>
+          <div class="activity-item-content">
+            <div class="activity-item-title">Actualización de inventario - Lote L2025001</div>
+            <div class="activity-item-time">Hace 1 hora</div>
+          </div>
+        </div>
+        <div class="activity-item">
+          <div class="activity-item-icon">⚠️</div>
+          <div class="activity-item-content">
+            <div class="activity-item-title">Alerta: Stock bajo en Ibuprofeno 400mg</div>
+            <div class="activity-item-time">Hace 2 horas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Cargar información del usuario
+    document.addEventListener('DOMContentLoaded', function() {
+      const farmaceutico = JSON.parse(sessionStorage.getItem('farmaceutico'));
+      
+      if (!farmaceutico) {
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      document.getElementById('nombreUsuario').textContent = farmaceutico.nombre;
+      
+      // Actualizar estadísticas cada 30 segundos
+      setInterval(actualizarEstadisticas, 30000);
+    });
+
+    function actualizarEstadisticas() {
+      // Aquí iría la lógica para actualizar las estadísticas desde el servidor
+      console.log('Actualizando estadísticas...');
+    }
+
+    function cerrarSesion() {
+      if (confirm('¿Está seguro que desea cerrar sesión?')) {
+        sessionStorage.removeItem('farmaceutico');
+        window.location.href = 'login.html';
+      }
+    }
+
+    // Animaciones de entrada
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.stat-card, .module-card');
+      cards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+          card.style.transition = 'all 0.5s ease';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, index * 100);
+      });
+    });
+  </script>
+
+</body>
+</html>
