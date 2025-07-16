@@ -13,14 +13,17 @@
   </header>
 
   <div class="main-container">
-    
-    <!-- Navegación de tipos de venta -->
-    <div class="nav-tabs">
+    <div class="nav-tabs">        
+      <div class="button-container" style="margin-bottom: 30px; text-align: left;">
+        <a href="dashboard_farmacia.html" class="primary-button" style="padding: 12px 25px; display: inline-flex; align-items: center; text-decoration: none;">
+          ← Volver
+        </a>
+      </div>
       <button class="tab-button active">📋 Venta por Receta</button>
       <button class="tab-button" onclick="location.href='venta_sin_receta.html'">🛒 Venta sin Receta</button>
     </div>
 
-    <!-- Barra de búsqueda de receta -->
+    <!-- Buscador -->
     <div class="search-container">
       <div class="search-card">
         <div class="search-header">
@@ -36,164 +39,261 @@
       </div>
     </div>
 
-    <!-- Grid de contenido -->
-    <div class="content-grid">
-      
-      <!-- Información de la Receta -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-icon">📄</span>
-          <h3 class="card-title">Información de la Receta</h3>
-        </div>
-        <div class="info-container">
-          <div class="info-item">
-            <span class="info-label">Número de Receta:</span>
-            <span class="info-value">REC-001</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Fecha de Emisión:</span>
-            <span class="info-value">2025-02-01</span>
-          </div>
-        </div>
-      </div>
+    <!-- CONTENIDO OCULTO AL INICIO -->
+    <div class="venta-container" style="display: none;">
 
-      <!-- Datos del Médico -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-icon">👨‍⚕️</span>
-          <h3 class="card-title">Médico Tratante</h3>
-        </div>
-        <div class="info-container">
-          <div class="info-item">
-            <span class="info-label">Nombre:</span>
-            <span class="info-value">Luis</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Apellido:</span>
-            <span class="info-value">González</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Datos del Paciente -->
-      <div class="card full-width">
-        <div class="card-header">
-          <span class="card-icon">👤</span>
-          <h3 class="card-title">Información del Paciente</h3>
-        </div>
-        <div class="patient-grid">
-          <div class="info-item">
-            <span class="info-label">Nombre:</span>
-            <span class="info-value">Juan</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Apellido:</span>
-            <span class="info-value">Pérez</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">DNI:</span>
-            <span class="info-value">1000001</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Fecha de Nac:</span>
-            <span class="info-value">1985-01-15</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Teléfono:</span>
-            <span class="info-value">987654321</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Correo:</span>
-            <span class="info-value">juan.perez1@email.com</span>
-          </div>
-          <div class="info-item">
-            <span class="info-label">Dirección:</span>
-            <span class="info-value">Av. Perú 123</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Productos Recetados -->
-      <div class="card full-width">
-        <div class="card-header">
-          <span class="card-icon">💊</span>
-          <h3 class="card-title">Productos Recetados</h3>
-        </div>
+      <!-- Grid de contenido -->
+      <div class="content-grid">
         
-        <div class="table-container">
-          <table class="products-table">
-            <thead>
-              <tr>
-                <th>Producto</th>
-                <th>Cantidad</th>
-                <th>Precio Unitario</th>
-                <th>Subtotal</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <div class="product-info">
-                    <strong>Amoxicilina 500mg</strong>
-                    <small>Antibiótico - Cápsulas</small>
-                  </div>
-                </td>
-                <td>
-                  <span class="quantity-badge">2</span>
-                </td>
-                <td>S/ 12.50</td>
-                <td class="subtotal">S/ 25.00</td>
-                <td>
-                  <button class="action-btn edit-btn">✏️</button>
-                  <button class="action-btn delete-btn">🗑️</button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="product-info">
-                    <strong>Ibuprofeno 400mg</strong>
-                    <small>Analgésico - Tabletas</small>
-                  </div>
-                </td>
-                <td>
-                  <span class="quantity-badge">1</span>
-                </td>
-                <td>S/ 9.80</td>
-                <td class="subtotal">S/ 9.80</td>
-                <td>
-                  <button class="action-btn edit-btn">✏️</button>
-                  <button class="action-btn delete-btn">🗑️</button>
-                </td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colspan="3" class="total-label">TOTAL A PAGAR:</td>
-                <td colspan="2" class="total-amount">S/ 34.80</td>
-              </tr>
-            </tfoot>
-          </table>
+        <!-- Información de la Receta -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">📄</span>
+            <h3 class="card-title">Información de la Receta</h3>
+          </div>
+          <div class="info-container">
+            <div class="info-item">
+              <span class="info-label">Número de Receta:</span>
+              <span class="info-value receta-id"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Fecha de Emisión:</span>
+              <span class="info-value fecha-emision"></span>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Botón de acción principal -->
-    <div class="button-container">
-      <button class="primary-button" onclick="registrarVenta()">
-        ✅ Registrar Venta
-      </button>
+        <!-- Datos del Médico -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-icon">👨‍⚕️</span>
+            <h3 class="card-title">Médico Tratante</h3>
+          </div>
+          <div class="info-container">
+            <div class="info-item">
+              <span class="info-label">Nombre:</span>
+              <span class="info-value medico-nombre"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Apellido:</span>
+              <span class="info-value medico-apellido"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Datos del Paciente -->
+        <div class="card full-width">
+          <div class="card-header">
+            <span class="card-icon">👤</span>
+            <h3 class="card-title">Información del Paciente</h3>
+          </div>
+          <div class="patient-grid">
+            <div class="info-item">
+              <span class="info-label">Nombre:</span>
+              <span class="info-value paciente-nombre"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Apellido:</span>
+              <span class="info-value paciente-apellido"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">DNI:</span>
+              <span class="info-value paciente-dni"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Fecha de Nac:</span>
+              <span class="info-value paciente-nac"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Teléfono:</span>
+              <span class="info-value paciente-telefono"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Correo:</span>
+              <span class="info-value paciente-correo"></span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Dirección:</span>
+              <span class="info-value paciente-direccion"></span>
+            </div>
+          </div>
+
+          <!-- Confirmación debajo de los datos -->
+          <div class="confirm-container" id="confirmContainer">
+            <p>¿Es este el paciente correcto?</p>
+            <div class="confirm-buttons">
+              <button class="confirm" onclick="confirmarPaciente()">✅ Sí, continuar</button>
+              <button class="decline" onclick="declinarPaciente()">❌ No es el paciente</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Productos Recetados -->
+        <div class="card full-width productos-container" style="display:none;">
+          <div class="card-header">
+            <span class="card-icon">💊</span>
+            <h3 class="card-title">Productos Recetados</h3>
+          </div>
+          <div class="table-container">
+            <table class="products-table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Precio Unitario</th>
+                  <th>Subtotal</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="product-info">
+                      <strong>Amoxicilina 500mg</strong>
+                      <small>Antibiótico - Cápsulas</small>
+                    </div>
+                  </td>
+                  <td><span class="quantity-badge">2</span></td>
+                  <td>S/ 12.50</td>
+                  <td class="subtotal">S/ 25.00</td>
+                  <td>
+                    <button class="action-btn edit-btn">✏️</button>
+                    <button class="action-btn delete-btn">🗑️</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="product-info">
+                      <strong>Ibuprofeno 400mg</strong>
+                      <small>Analgésico - Tabletas</small>
+                    </div>
+                  </td>
+                  <td><span class="quantity-badge">1</span></td>
+                  <td>S/ 9.80</td>
+                  <td class="subtotal">S/ 9.80</td>
+                  <td>
+                    <button class="action-btn edit-btn">✏️</button>
+                    <button class="action-btn delete-btn">🗑️</button>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3" class="total-label">TOTAL A PAGAR:</td>
+                  <td colspan="2" class="total-amount">S/ 34.80</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <!-- Botón de acción principal -->
+        <div class="button-container productos-container" style="display:none;">
+          <button class="primary-button" onclick="registrarVenta()">
+            ✅ Registrar Venta
+          </button>
+        </div>
+
+      </div>
     </div>
   </div>
 
   <script>
+    let recetaEncontrada = false;
+
+    function buscarReceta() {
+      const recetaId = document.getElementById("recetaId").value.trim();
+      const mensaje = document.getElementById("searchMessage");
+
+      if (recetaId === "") {
+        mensaje.textContent = "⚠️ Por favor, ingresa un ID de receta.";
+        mensaje.style.color = "#f44336";
+        return;
+      }
+
+      if (recetaId === "REC-001") {
+        recetaEncontrada = true;
+
+        mensaje.textContent = ""; // limpiar mensaje congelado
+
+        // Simular datos del paciente en memoria
+        window.datosPaciente = {
+          nombre: "Juan",
+          apellido: "Pérez",
+          dni: "1000001",
+          fechaNac: "1985-01-15",
+          telefono: "987654321",
+          correo: "juan.perez1@email.com",
+          direccion: "Av. Perú 123",
+          recetaId: recetaId,
+          fechaEmision: "2025-02-01",
+          medicoNombre: "Luis",
+          medicoApellido: "González"
+        };
+
+        // Mostrar contenedor de datos
+        document.querySelector(".venta-container").style.display = "block";
+        document.getElementById("confirmContainer").style.display = "block";
+
+        // Llenar datos
+        document.querySelector(".receta-id").textContent = window.datosPaciente.recetaId;
+        document.querySelector(".fecha-emision").textContent = window.datosPaciente.fechaEmision;
+        document.querySelector(".medico-nombre").textContent = window.datosPaciente.medicoNombre;
+        document.querySelector(".medico-apellido").textContent = window.datosPaciente.medicoApellido;
+        document.querySelector(".paciente-nombre").textContent = window.datosPaciente.nombre;
+        document.querySelector(".paciente-apellido").textContent = window.datosPaciente.apellido;
+        document.querySelector(".paciente-dni").textContent = window.datosPaciente.dni;
+        document.querySelector(".paciente-nac").textContent = window.datosPaciente.fechaNac;
+        document.querySelector(".paciente-telefono").textContent = window.datosPaciente.telefono;
+        document.querySelector(".paciente-correo").textContent = window.datosPaciente.correo;
+        document.querySelector(".paciente-direccion").textContent = window.datosPaciente.direccion;
+
+      } else {
+        mensaje.textContent = "❌ Receta no encontrada.";
+        mensaje.style.color = "#f44336";
+        document.querySelector(".venta-container").style.display = "none";
+      }
+    }
+
+    function confirmarPaciente() {
+      const paciente = window.datosPaciente;
+
+      if (paciente.dni === "1000001") {
+        document.querySelectorAll(".productos-container").forEach(e => e.style.display = "block");
+        document.getElementById("confirmContainer").style.display = "none";
+        document.getElementById("searchMessage").textContent = "";
+      } else {
+        const mensaje = document.getElementById("searchMessage");
+        mensaje.innerHTML = `<span style="color: #f44336;">❌ Paciente no encontrado.</span> 
+          <button onclick="registrarNuevoPaciente()">➕ Registrar Paciente</button>`;
+        document.querySelector(".venta-container").style.display = "none";
+      }
+    }
+
+    function declinarPaciente() {
+      limpiarBusqueda();
+      document.querySelector(".venta-container").style.display = "none";
+      document.querySelectorAll(".productos-container").forEach(e => e.style.display = "none");
+      document.getElementById("confirmContainer").style.display = "none";
+    }
+
+    function limpiarBusqueda() {
+      document.getElementById("recetaId").value = "";
+      document.getElementById("searchMessage").textContent = "";
+    }
+
+    function registrarNuevoPaciente() {
+      alert("Redirigiendo al formulario de registro de paciente...");
+      // window.location.href = "registro_paciente.html";
+    }
+
     function registrarVenta() {
       const button = document.querySelector('.primary-button');
       const originalText = button.textContent;
-      
+
       button.textContent = '✅ Procesando...';
       button.disabled = true;
-      
+
       setTimeout(() => {
         button.textContent = '🎉 Venta Registrada Exitosamente';
         setTimeout(() => {
@@ -201,50 +301,63 @@
           button.disabled = false;
         }, 2000);
       }, 1500);
+    }document.addEventListener("DOMContentLoaded", () => {
+  document.querySelector(".products-table").addEventListener("click", function(e) {
+    if (e.target.closest(".edit-btn")) {
+      handleEdit(e.target.closest("tr"));
     }
+    if (e.target.closest(".delete-btn")) {
+      handleDelete(e.target.closest("tr"));
+    }
+  });
+});
+function handleEdit(row) {
+  const qtyCell = row.querySelector(".quantity-badge");
+  const priceCell = row.cells[2];
+  const subtotalCell = row.querySelector(".subtotal");
+
+  let currentQty = parseInt(qtyCell.textContent, 10);
+  let newQty = prompt("Ingrese la nueva cantidad:", currentQty);
+
+  if (newQty === null) return; // cancelado
+
+  newQty = parseInt(newQty, 10);
+
+  if (isNaN(newQty) || newQty <= 0) {
+    alert("Cantidad inválida.");
+    return;
+  }
+
+  // Actualizar cantidad
+  qtyCell.textContent = newQty;
+
+  // Calcular nuevo subtotal
+  let price = parseFloat(priceCell.textContent.replace(/[^\d.]/g, ""));
+  let newSubtotal = (price * newQty).toFixed(2);
+  subtotalCell.textContent = `S/ ${newSubtotal}`;
+
+  // Recalcular total
+  recalculateTotal();
+}
+
+function handleDelete(row) {
+  if (confirm("¿Deseas eliminar este producto?")) {
+    row.remove();
+    recalculateTotal();
+  }
+}
+
+function recalculateTotal() {
+  let total = 0;
+  document.querySelectorAll(".products-table tbody tr").forEach(tr => {
+    const subtotalCell = tr.querySelector(".subtotal");
+    if (subtotalCell) {
+      let subtotal = parseFloat(subtotalCell.textContent.replace(/[^\d.]/g, ""));
+      total += subtotal;
+    }
+  });
+  document.querySelector(".total-amount").textContent = `S/ ${total.toFixed(2)}`;
+}
   </script>
-<script>
-  function buscarReceta() {
-    const recetaId = document.getElementById("recetaId").value.trim();
-    const mensaje = document.getElementById("searchMessage");
-
-    if (recetaId === "") {
-      mensaje.textContent = "⚠️ Por favor, ingresa un ID de receta.";
-      mensaje.style.color = "#f44336";
-      return;
-    }
-
-    // Simulación: sólo funciona con 'REC-001'
-    if (recetaId === "REC-001") {
-      mensaje.textContent = "✅ Receta encontrada exitosamente.";
-      mensaje.style.color = "#2e7d32";
-
-      // Datos simulados — puedes reemplazar luego con datos reales
-      document.querySelector(".info-value:nth-child(2)").textContent = recetaId;
-      document.querySelectorAll(".info-value")[1].textContent = "2025-02-01";
-      document.querySelectorAll(".info-value")[2].textContent = "Luis";
-      document.querySelectorAll(".info-value")[3].textContent = "González";
-      document.querySelectorAll(".info-value")[4].textContent = "Juan";
-      document.querySelectorAll(".info-value")[5].textContent = "Pérez";
-      document.querySelectorAll(".info-value")[6].textContent = "1000001";
-      document.querySelectorAll(".info-value")[7].textContent = "1985-01-15";
-      document.querySelectorAll(".info-value")[8].textContent = "987654321";
-      document.querySelectorAll(".info-value")[9].textContent = "juan.perez1@email.com";
-      document.querySelectorAll(".info-value")[10].textContent = "Av. Perú 123";
-
-      // Aquí podrías vaciar y volver a cargar la tabla de productos si deseas
-
-    } else {
-      mensaje.textContent = "❌ Receta no encontrada.";
-      mensaje.style.color = "#f44336";
-    }
-  }
-
-  function limpiarBusqueda() {
-    document.getElementById("recetaId").value = "";
-    document.getElementById("searchMessage").textContent = "";
-  }
-</script>
-
 </body>
 </html>

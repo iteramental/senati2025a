@@ -309,8 +309,7 @@
     </div>
   </div>
 
-  <div class="main-container">
-    <!-- Estadísticas rápidas -->
+  <div class="main-container"> 
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-header">
@@ -344,8 +343,6 @@
         <div class="stat-label">Stock Bajo</div>
       </div>
     </div>
-
-    <!-- Módulos principales -->
     <div class="modules-grid">
       <a href="venta_receta.html" class="module-card">
         <span class="module-icon">📋</span>
@@ -362,79 +359,14 @@
           Venta directa de medicamentos OTC y productos farmacéuticos
         </p>
       </a>
-
-      <a href="inventario.html" class="module-card">
-        <span class="module-icon">📦</span>
-        <h3 class="module-title">Inventario</h3>
-        <p class="module-description">
-          Gestión de stock, lotes, vencimientos y control de productos
-        </p>
-      </a>
-
-      <a href="reportes.html" class="module-card">
+      <a href="Hventa.html" class="module-card">
         <span class="module-icon">📊</span>
-        <h3 class="module-title">Reportes</h3>
+        <h3 class="module-title">Historial de ventas</h3>
         <p class="module-description">
-          Informes de ventas, inventario y estadísticas farmacéuticas
-        </p>
-      </a>
-
-      <a href="configuracion.html" class="module-card">
-        <span class="module-icon">⚙️</span>
-        <h3 class="module-title">Configuración</h3>
-        <p class="module-description">
-          Configuración del sistema, usuarios y parámetros generales
-        </p>
-      </a>
-
-      <a href="proveedores.html" class="module-card">
-        <span class="module-icon">🏢</span>
-        <h3 class="module-title">Proveedores</h3>
-        <p class="module-description">
-          Gestión de proveedores, pedidos y compras de medicamentos
+           Informes de ventas e información de compradores
         </p>
       </a>
     </div>
-
-    <!-- Actividad reciente -->
-    <div class="recent-activity">
-      <div class="activity-header">
-        <span class="activity-icon">📈</span>
-        <h3 class="activity-title">Actividad Reciente</h3>
-      </div>
-      <div class="activity-list">
-        <div class="activity-item">
-          <div class="activity-item-icon">💊</div>
-          <div class="activity-item-content">
-            <div class="activity-item-title">Venta de Amoxicilina 500mg - REC-001</div>
-            <div class="activity-item-time">Hace 15 minutos</div>
-          </div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-item-icon">🛒</div>
-          <div class="activity-item-content">
-            <div class="activity-item-title">Venta sin receta - Paracetamol 500mg</div>
-            <div class="activity-item-time">Hace 32 minutos</div>
-          </div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-item-icon">📦</div>
-          <div class="activity-item-content">
-            <div class="activity-item-title">Actualización de inventario - Lote L2025001</div>
-            <div class="activity-item-time">Hace 1 hora</div>
-          </div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-item-icon">⚠️</div>
-          <div class="activity-item-content">
-            <div class="activity-item-title">Alerta: Stock bajo en Ibuprofeno 400mg</div>
-            <div class="activity-item-time">Hace 2 horas</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <script>
     // Cargar información del usuario
     document.addEventListener('DOMContentLoaded', function() {
@@ -459,7 +391,7 @@
     function cerrarSesion() {
       if (confirm('¿Está seguro que desea cerrar sesión?')) {
         sessionStorage.removeItem('farmaceutico');
-        window.location.href = 'login.html';
+        window.location.href = 'inicio_sesion.html';
       }
     }
 
