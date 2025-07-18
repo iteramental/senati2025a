@@ -1,19 +1,16 @@
 package far.jpa;
 
-import java.io.Serializable;
-import java.util.Date;
 import jakarta.persistence.*;
+import java.sql.Date;
 
 @Entity
 @Table(name = "pacientes")
-public class PacienteJPA implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class PacienteJPA {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_paciente")
-    private Integer idPaciente;
+    private int idPaciente;
 
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
@@ -24,7 +21,6 @@ public class PacienteJPA implements Serializable {
     @Column(name = "dni", nullable = false, unique = true, length = 20)
     private String dni;
 
-    @Temporal(TemporalType.DATE)
     @Column(name = "fecha_nacimiento")
     private Date fechaNacimiento;
 
@@ -39,11 +35,11 @@ public class PacienteJPA implements Serializable {
 
     // Getters y Setters
 
-    public Integer getIdPaciente() {
+    public int getIdPaciente() {
         return idPaciente;
     }
 
-    public void setIdPaciente(Integer idPaciente) {
+    public void setIdPaciente(int idPaciente) {
         this.idPaciente = idPaciente;
     }
 
@@ -101,5 +97,10 @@ public class PacienteJPA implements Serializable {
 
     public void setDireccion(String direccion) {
         this.direccion = direccion;
+    }
+
+    // Método útil para mostrar nombre completo
+    public String getNombreCompleto() {
+        return nombre + " " + apellido;
     }
 }

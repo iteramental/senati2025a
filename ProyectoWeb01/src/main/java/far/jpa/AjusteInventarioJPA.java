@@ -1,21 +1,18 @@
 package far.jpa;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
 import jakarta.persistence.*;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "ajustes_inventario")
-public class AjusteInventarioJPA implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class AjusteInventarioJPA {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_ajuste")
-    private Integer idAjuste;
+    private int idAjuste;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "id_producto", nullable = false)
     private ProductoJPA producto;
 
@@ -26,26 +23,25 @@ public class AjusteInventarioJPA implements Serializable {
     private String tipoAjuste;
 
     @Column(name = "fecha", nullable = false)
-    private LocalDateTime fecha;
+    private Timestamp fecha;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "id_farmaceutico")
     private FarmaceuticoJPA farmaceutico;
 
-    @Lob
-    @Column(name = "motivo")
+    @Column(name = "motivo", columnDefinition = "TEXT")
     private String motivo;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    @Column(name = "created_at", insertable = false, updatable = false)
+    private Timestamp createdAt;
 
     // Getters y Setters
 
-    public Integer getIdAjuste() {
+    public int getIdAjuste() {
         return idAjuste;
     }
 
-    public void setIdAjuste(Integer idAjuste) {
+    public void setIdAjuste(int idAjuste) {
         this.idAjuste = idAjuste;
     }
 
@@ -73,11 +69,11 @@ public class AjusteInventarioJPA implements Serializable {
         this.tipoAjuste = tipoAjuste;
     }
 
-    public LocalDateTime getFecha() {
+    public Timestamp getFecha() {
         return fecha;
     }
 
-    public void setFecha(LocalDateTime fecha) {
+    public void setFecha(Timestamp fecha) {
         this.fecha = fecha;
     }
 
@@ -97,11 +93,7 @@ public class AjusteInventarioJPA implements Serializable {
         this.motivo = motivo;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 }

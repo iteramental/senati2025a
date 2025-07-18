@@ -1,19 +1,17 @@
 package far.jpa;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
 import jakarta.persistence.*;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "productos")
-public class ProductoJPA implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class ProductoJPA {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_producto")
-    private Integer idProducto;
+    private int idProducto;
 
     @Column(name = "nombre_base", nullable = false)
     private String nombreBase;
@@ -24,42 +22,42 @@ public class ProductoJPA implements Serializable {
     @Column(name = "concentracion")
     private String concentracion;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "id_tipo_producto", nullable = false)
     private TipoProductoJPA tipoProducto;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "id_tipo_medicamento")
     private TipoMedicamentoJPA tipoMedicamento;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "id_origen", nullable = false)
     private OrigenProductoJPA origen;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "id_proveedor", nullable = false)
     private ProveedorJPA proveedor;
 
     @Column(name = "precio", nullable = false)
-    private Double precio;
+    private BigDecimal precio;
 
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private Timestamp createdAt;
 
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private Timestamp updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "created_by")
     private FarmaceuticoJPA creadoPor;
 
-    // Getters y Setters
+    // Getters y setters
 
-    public Integer getIdProducto() {
+    public int getIdProducto() {
         return idProducto;
     }
 
-    public void setIdProducto(Integer idProducto) {
+    public void setIdProducto(int idProducto) {
         this.idProducto = idProducto;
     }
 
@@ -119,27 +117,27 @@ public class ProductoJPA implements Serializable {
         this.proveedor = proveedor;
     }
 
-    public Double getPrecio() {
+    public BigDecimal getPrecio() {
         return precio;
     }
 
-    public void setPrecio(Double precio) {
+    public void setPrecio(BigDecimal precio) {
         this.precio = precio;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDateTime getUpdatedAt() {
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
+    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 

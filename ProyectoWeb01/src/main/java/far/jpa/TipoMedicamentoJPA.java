@@ -1,29 +1,25 @@
 package far.jpa;
 
-import java.io.Serializable;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "tipos_medicamento")
-public class TipoMedicamentoJPA implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class TipoMedicamentoJPA {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_tipo_medicamento")
-    private Integer idTipoMedicamento;
+    private int idTipoMedicamento;
 
     @Column(name = "descripcion", nullable = false, length = 50)
     private String descripcion;
 
     // Getters y Setters
-
-    public Integer getIdTipoMedicamento() {
+    public int getIdTipoMedicamento() {
         return idTipoMedicamento;
     }
 
-    public void setIdTipoMedicamento(Integer idTipoMedicamento) {
+    public void setIdTipoMedicamento(int idTipoMedicamento) {
         this.idTipoMedicamento = idTipoMedicamento;
     }
 
@@ -35,3 +31,4 @@ public class TipoMedicamentoJPA implements Serializable {
         this.descripcion = descripcion;
     }
 }
+
