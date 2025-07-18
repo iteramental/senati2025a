@@ -184,7 +184,6 @@
   </style>
 </head>
 <body>
-
   <div class="login-container">
     <div class="login-header">
       <span class="login-logo">🏥</span>
@@ -192,16 +191,26 @@
       <p class="login-subtitle">Clínica Integrada</p>
     </div>
 
-    <div id="errorMessage" class="error-message"></div>
-    <div id="successMessage" class="success-message"></div>
+    <div class="error-message" id="errorDiv" style="display: none;">
+  Usuario o contraseña incorrectos.
+</div>
 
-    <form class="login-form" onsubmit="iniciarSesion(event)">
+<script>
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("error") === "1") {
+    document.getElementById("errorDiv").style.display = "block";
+  }
+</script>
+
+    <form class="login-form" action="farmacia" method="post">
+      <input type="hidden" name="accion" value="login">
+
       <div class="form-group">
-        <label class="form-label" for="usuario">👤 Usuario</label>
+        <label class="form-label" for="username">👤 Usuario</label>
         <input 
           type="text" 
-          id="usuario" 
-          name="usuario" 
+          id="username" 
+          name="username" 
           class="form-input" 
           placeholder="Ingrese su usuario"
           required
@@ -233,57 +242,13 @@
   </div>
 
   <script>
-    function iniciarSesion(event) {
-      event.preventDefault();
-      
-      const usuario = document.getElementById('usuario').value;
-      const password = document.getElementById('password').value;
-      const button = document.getElementById('loginBtn');
-      const errorMessage = document.getElementById('errorMessage');
-      const successMessage = document.getElementById('successMessage');
-      
-      // Limpiar mensajes anteriores
-      errorMessage.style.display = 'none';
-      successMessage.style.display = 'none';
-      
-      // Cambiar estado del botón
-      button.textContent = '🔄 Verificando...';
-      button.disabled = true;
-      
-      // Simular validación (aquí iría la conexión real a la base de datos)
-      setTimeout(() => {
-        if (usuario === 'admin' && password === 'admin123') {
-          successMessage.textContent = '✅ Acceso concedido. Redirigiendo...';
-          successMessage.style.display = 'block';
-          
-          // Simular guardado de sesión
-          sessionStorage.setItem('farmaceutico', JSON.stringify({
-            nombre: 'admin',
-            usuario: 'admin',
-            rol: 'administrador'
-          }));
-          
-          setTimeout(() => {
-            window.location.href = 'dashboard_farmacia.html';
-          }, 1500);
-          
-        } else {
-          errorMessage.textContent = '❌ Usuario o contraseña incorrectos';
-          errorMessage.style.display = 'block';
-          
-          button.textContent = '🚪 Iniciar Sesión';
-          button.disabled = false;
-        }
-      }, 1500);
-    }
-
-    // Efecto de entrada suave
+    // Solo animación visual
     document.addEventListener('DOMContentLoaded', function() {
       const inputs = document.querySelectorAll('.form-input');
       inputs.forEach((input, index) => {
         input.style.opacity = '0';
         input.style.transform = 'translateX(-20px)';
-        
+
         setTimeout(() => {
           input.style.transition = 'all 0.5s ease';
           input.style.opacity = '1';
@@ -292,6 +257,5 @@
       });
     });
   </script>
-
 </body>
 </html>

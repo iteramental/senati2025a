@@ -370,14 +370,17 @@
   <script>
     // Cargar información del usuario
     document.addEventListener('DOMContentLoaded', function() {
-      const farmaceutico = JSON.parse(sessionStorage.getItem('farmaceutico'));
-      
-      if (!farmaceutico) {
-        window.location.href = 'login.html';
-        return;
-      }
-      
-      document.getElementById('nombreUsuario').textContent = farmaceutico.nombre;
+    	fetch('FarmaciaServlet?accion=sesion')
+    	  .then(response => {
+    	    if (!response.ok) throw new Error('No autenticado');
+    	    return response.json();
+    	  })
+    	  .then(data => {
+    	    document.getElementById('nombreUsuario').textContent = data.usuario;
+    	  })
+    	  .catch(() => {
+    	    window.location.href = 'inicio_sesion.html';
+    	  });
       
       // Actualizar estadísticas cada 30 segundos
       setInterval(actualizarEstadisticas, 30000);
@@ -389,11 +392,14 @@
     }
 
     function cerrarSesion() {
-      if (confirm('¿Está seguro que desea cerrar sesión?')) {
-        sessionStorage.removeItem('farmaceutico');
-        window.location.href = 'inicio_sesion.html';
-      }
-    }
+    	  if (confirm('¿Está seguro que desea cerrar sesión?')) {
+    	    fetch('FarmaciaServlet?accion=cerrar', { method: 'POST' }) // implementar en el servlet
+    	      .finally(() => {
+    	        sessionStorage.removeItem('farmaceutico');
+    	        window.location.href = 'inicio_sesion.html';
+    	      });
+    	  }
+    	}
 
     // Animaciones de entrada
     document.addEventListener('DOMContentLoaded', function() {

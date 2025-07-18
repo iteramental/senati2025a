@@ -1,21 +1,24 @@
 package far.jpa;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import jakarta.persistence.*;
-import java.sql.Timestamp;
 
 @Entity
 @Table(name = "farmaceuticos")
-public class FarmaceuticoJPA {
+public class FarmaceuticoJPA implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_farmaceutico")
-    private int idFarmaceutico;
+    private Integer idFarmaceutico;
 
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
-    @Column(name = "usuario", nullable = false, unique = true, length = 50)
+    @Column(name = "usuario", nullable = false, length = 50, unique = true)
     private String usuario;
 
     @Column(name = "password_hash", nullable = false, length = 255)
@@ -24,19 +27,31 @@ public class FarmaceuticoJPA {
     @Column(name = "rol", length = 50)
     private String rol;
 
-    @Column(name = "created_at", insertable = false, updatable = false)
-    private Timestamp createdAt;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", insertable = false, updatable = false)
-    private Timestamp updatedAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    // Autoasignación de fechas
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 
     // Getters y Setters
 
-    public int getIdFarmaceutico() {
+    public Integer getIdFarmaceutico() {
         return idFarmaceutico;
     }
 
-    public void setIdFarmaceutico(int idFarmaceutico) {
+    public void setIdFarmaceutico(Integer idFarmaceutico) {
         this.idFarmaceutico = idFarmaceutico;
     }
 
@@ -72,11 +87,19 @@ public class FarmaceuticoJPA {
         this.rol = rol;
     }
 
-    public Timestamp getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public Timestamp getUpdatedAt() {
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
