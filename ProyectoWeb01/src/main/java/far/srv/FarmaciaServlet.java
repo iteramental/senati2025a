@@ -39,6 +39,10 @@ public class FarmaciaServlet extends HttpServlet {
                 String password = request.getParameter("password");
 
                 EntityManager em = emf.createEntityManager();
+                
+                System.out.println(">> Entidades detectadas:");
+                em.getMetamodel().getEntities().forEach(e -> System.out.println(" - " + e.getName()));
+                
                 try {
                     FarmaceuticoJPA farmaceutico = GestionFarmaceutico.validarUsuario(em, usuario, password);
                     if (farmaceutico != null) {

@@ -4,7 +4,7 @@
 		 					 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>emp.jpa</groupId>
+  <groupId>far.jpa</groupId>
   <artifactId>ProyectoWeb01</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   
