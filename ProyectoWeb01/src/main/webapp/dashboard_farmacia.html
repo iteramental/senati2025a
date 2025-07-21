@@ -370,21 +370,24 @@
   <script>
     // Cargar información del usuario
     document.addEventListener('DOMContentLoaded', function() {
-    	fetch('FarmaciaServlet?accion=sesion')
-    	  .then(response => {
-    	    if (!response.ok) throw new Error('No autenticado');
-    	    return response.json();
-    	  })
-    	  .then(data => {
-    	    document.getElementById('nombreUsuario').textContent = data.usuario;
-    	  })
-    	  .catch(() => {
-    	    window.location.href = 'inicio_sesion.html';
-    	  });
-      
-      // Actualizar estadísticas cada 30 segundos
-      setInterval(actualizarEstadisticas, 30000);
-    });
+  fetch('/ProyectoWeb01/FarmaciaServlet?accion=sesion', {
+    credentials: 'include'
+  })
+  .then(response => {
+    if (!response.ok) throw new Error('No autenticado');
+    return response.json();
+  })
+  .then(data => {
+    document.getElementById('nombreUsuario').textContent = data.usuario;
+  })
+  .catch(() => {
+    window.location.href = 'inicio_sesion.html';
+  });
+
+  // Actualizar estadísticas cada 30 segundos
+  setInterval(actualizarEstadisticas, 30000);
+});
+
 
     function actualizarEstadisticas() {
       // Aquí iría la lógica para actualizar las estadísticas desde el servidor
@@ -393,13 +396,19 @@
 
     function cerrarSesion() {
     	  if (confirm('¿Está seguro que desea cerrar sesión?')) {
-    	    fetch('FarmaciaServlet?accion=cerrar', { method: 'POST' }) // implementar en el servlet
-    	      .finally(() => {
-    	        sessionStorage.removeItem('farmaceutico');
-    	        window.location.href = 'inicio_sesion.html';
-    	      });
+    	    fetch('/ProyectoWeb01/FarmaciaServlet?accion=sesion', {
+    	      method: 'POST',
+    	      credentials: 'include'
+    	    })
+    	    .then(() => {
+    	      window.location.href = 'inicio_sesion.html';
+    	    })
+    	    .catch(() => {
+    	      alert('Error al cerrar sesión');
+    	    });
     	  }
     	}
+
 
     // Animaciones de entrada
     document.addEventListener('DOMContentLoaded', function() {
