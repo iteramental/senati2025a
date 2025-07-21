@@ -1,6 +1,9 @@
 package far.imp;
 
+import java.util.List;
+
 import far.jpa.FacturaEmitidaJPA;
+import far.jpa.RecetaDetalleJPA;
 import far.jpa.DetalleFacturaEmitidaJPA;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
@@ -12,13 +15,17 @@ public class VentaDAO {
         this.em = em;
     }
 
-    public void registrarVenta(FacturaEmitidaJPA factura, List<DetalleFacturaEmitidaJPA> detalles) {
+    public void registrarVenta(FacturaEmitidaJPA factura, List<RecetaDetalleJPA> detalles) {
         EntityTransaction transaction = em.getTransaction();
         try {
             transaction.begin();
             em.persist(factura);
-            for (DetalleFacturaEmitidaJPA detalle : detalles) {
+            for (RecetaDetalleJPA recetaDetalle : detalles) {
+                DetalleFacturaEmitidaJPA detalle = new DetalleFacturaEmitidaJPA();
                 detalle.setFactura(factura);
+                detalle.setProducto(recetaDetalle.getProducto());
+                detalle.setCantidad(recetaDetalle.getCantidad());
+                detalle.setPrecioUnitario(recetaDetalle.getProducto().getPrecio()); // O como lo calcules
                 em.persist(detalle);
             }
             transaction.commit();

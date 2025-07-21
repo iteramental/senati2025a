@@ -291,6 +291,7 @@
 </head>
 <body>
 
+
   <div class="dashboard-header">
     <div class="header-content">
       <div class="logo-section">
@@ -367,56 +368,31 @@
         </p>
       </a>
     </div>
+    
+    <!-- Scripts -->
   <script>
-    // Cargar información del usuario
-    document.addEventListener('DOMContentLoaded', function() {
-  fetch('/ProyectoWeb01/FarmaciaServlet?accion=sesion', {
-    credentials: 'include'
-  })
-  .then(response => {
-    if (!response.ok) throw new Error('No autenticado');
-    return response.json();
-  })
-  .then(data => {
-    document.getElementById('nombreUsuario').textContent = data.usuario;
-  })
-  .catch(() => {
-    window.location.href = 'inicio_sesion.html';
-  });
+    document.addEventListener('DOMContentLoaded', function () {
+      // 🔐 Verificar sesión activa
+      fetch('farmacia?accion=sesion', { credentials: 'include' })
+        .then(response => {
+          if (!response.ok) throw new Error('No autenticado');
+          return response.json();
+        })
+        .then(data => {
+          document.getElementById('nombreUsuario').textContent = data.usuario;
+        })
+        .catch(() => {
+          window.location.href = 'inicio_sesion.html';
+        });
 
-  // Actualizar estadísticas cada 30 segundos
-  setInterval(actualizarEstadisticas, 30000);
-});
+      // 🔄 Actualizar estadísticas cada 30 segundos (a implementar si quieres backend dinámico)
+      setInterval(actualizarEstadisticas, 30000);
 
-
-    function actualizarEstadisticas() {
-      // Aquí iría la lógica para actualizar las estadísticas desde el servidor
-      console.log('Actualizando estadísticas...');
-    }
-
-    function cerrarSesion() {
-    	  if (confirm('¿Está seguro que desea cerrar sesión?')) {
-    	    fetch('/ProyectoWeb01/FarmaciaServlet?accion=sesion', {
-    	      method: 'POST',
-    	      credentials: 'include'
-    	    })
-    	    .then(() => {
-    	      window.location.href = 'inicio_sesion.html';
-    	    })
-    	    .catch(() => {
-    	      alert('Error al cerrar sesión');
-    	    });
-    	  }
-    	}
-
-
-    // Animaciones de entrada
-    document.addEventListener('DOMContentLoaded', function() {
+      // 🎬 Animaciones suaves de aparición
       const cards = document.querySelectorAll('.stat-card, .module-card');
       cards.forEach((card, index) => {
         card.style.opacity = '0';
         card.style.transform = 'translateY(20px)';
-        
         setTimeout(() => {
           card.style.transition = 'all 0.5s ease';
           card.style.opacity = '1';
@@ -424,6 +400,27 @@
         }, index * 100);
       });
     });
+
+    // 🔁 Placeholder para estadísticas dinámicas
+    function actualizarEstadisticas() {
+      console.log("Actualizando estadísticas...");
+      // Aquí puedes hacer un fetch al backend para valores reales
+    }
+
+    // 🔓 Cerrar sesión
+    function cerrarSesion() {
+      fetch('farmacia', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: 'accion=cerrar'
+      }).then(resp => {
+        if (resp.ok) {
+          window.location.href = 'inicio_sesion.html';
+        }
+      });
+    }
   </script>
 
 </body>

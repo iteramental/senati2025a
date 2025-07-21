@@ -81,7 +81,6 @@ public class FarmaciaServlet extends HttpServlet {
 
         if ("sesion".equalsIgnoreCase(accion)) {
             HttpSession session = request.getSession(false);
-
             if (session != null && session.getAttribute("usuarioLogueado") != null) {
                 String usuario = (String) session.getAttribute("usuarioLogueado");
                 String rol = (String) session.getAttribute("rolUsuario");
@@ -91,26 +90,20 @@ public class FarmaciaServlet extends HttpServlet {
 
                 String json = String.format("{\"usuario\": \"%s\", \"rol\": \"%s\"}", usuario, rol);
                 response.getWriter().write(json);
-
             } else {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Código 401
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("{\"error\": \"Sesión no activa\"}");
             }
 
-        } else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Código 400
-            response.getWriter().write("{\"error\": \"Acción GET no reconocida\"}");
-        }
-
-        if ("sesion".equalsIgnoreCase(accion)) {
-            // Código existente para manejar sesión
         } else if ("buscarreceta".equalsIgnoreCase(accion)) {
             buscarReceta(request, response);
+
         } else {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // Código 400
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"error\": \"Acción GET no reconocida\"}");
         }
     }
+
     private void registrarVenta(HttpServletRequest request, HttpServletResponse response) throws IOException {
         EntityManager em = emf.createEntityManager();
         try {

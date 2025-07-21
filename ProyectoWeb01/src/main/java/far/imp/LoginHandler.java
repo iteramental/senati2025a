@@ -21,6 +21,7 @@ public class LoginHandler implements FarmaciaAccionHandler {
                 HttpSession session = request.getSession();
                 session.setAttribute("usuarioLogueado", farmaceutico.getUsuario());
                 session.setAttribute("rolUsuario", farmaceutico.getRol());
+                session.setMaxInactiveInterval(900); // 15 minutos (900 segundo
                 response.sendRedirect("dashboard_farmacia.html");
             } else {
                 response.sendRedirect("inicio_sesion.html?error=1");

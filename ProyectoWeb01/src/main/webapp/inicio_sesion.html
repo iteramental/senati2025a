@@ -183,6 +183,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="login-container">
     <div class="login-header">
@@ -194,13 +195,6 @@
     <div class="error-message" id="errorDiv" style="display: none;">
   Usuario o contraseña incorrectos.
 </div>
-
-<script>
-  const params = new URLSearchParams(window.location.search);
-  if (params.get("error") === "1") {
-    document.getElementById("errorDiv").style.display = "block";
-  }
-</script>
 
     <form class="login-form" action="farmacia" method="post">
       <input type="hidden" name="accion" value="login">
@@ -242,20 +236,33 @@
   </div>
 
   <script>
-    // Solo animación visual
-    document.addEventListener('DOMContentLoaded', function() {
-      const inputs = document.querySelectorAll('.form-input');
-      inputs.forEach((input, index) => {
-        input.style.opacity = '0';
-        input.style.transform = 'translateX(-20px)';
+  // Mostrar mensaje de error si se recibe ?error=1 en la URL
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("error") === "1") {
+    document.getElementById("errorDiv").style.display = "block";
+  } else if (params.get("error") === "500") {
+    document.getElementById("errorDiv").innerText = "Error interno. Intenta nuevamente.";
+    document.getElementById("errorDiv").style.display = "block";
+  }
+</script>
+  
+  <script>
+  // Animación de entrada para los campos del login
+  document.addEventListener('DOMContentLoaded', function() {
+    const inputs = document.querySelectorAll('.form-input');
+    inputs.forEach((input, index) => {
+      input.style.opacity = '0';
+      input.style.transform = 'translateX(-20px)';
 
-        setTimeout(() => {
-          input.style.transition = 'all 0.5s ease';
-          input.style.opacity = '1';
-          input.style.transform = 'translateX(0)';
-        }, index * 100 + 300);
-      });
+      setTimeout(() => {
+        input.style.transition = 'all 0.5s ease';
+        input.style.opacity = '1';
+        input.style.transform = 'translateX(0)';
+      }, index * 100 + 300);
     });
-  </script>
+  });
+</script>
+  
+  
 </body>
 </html>
