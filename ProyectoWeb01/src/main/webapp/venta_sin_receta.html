@@ -468,63 +468,100 @@
       cargarPacientes();
 
       function buscarPaciente() {
-        const dni = document.getElementById("pacienteDni").value.trim();
-        const mensaje = document.getElementById("searchMessage");
-        const btnNuevoPaciente = document.getElementById(
-          "nuevoPacienteBtnContainer"
-        );
-        if (dni === "") {
-          mensaje.textContent = "⚠️ Por favor, ingresa un DNI.";
-          mensaje.style.color = "#f44336";
-          btnNuevoPaciente.style.display = "none";
-          mostrarSeccionDatosPaciente(true);
-          return;
-        }
-        if (pacientes[dni]) {
-          const paciente = pacientes[dni];
-          mensaje.textContent = "✅ Paciente encontrado exitosamente.";
-          mensaje.style.color = "#2e7d32";
-          // Llenar campos con datos del paciente
-          document.getElementById("dniInput").value = paciente.dni;
-          document.getElementById("nombreInput").value = paciente.nombre;
-          document.getElementById("apellidoInput").value = paciente.apellido;
-          document.getElementById("telefonoInput").value = paciente.telefono;
-          document.getElementById("direccionInput").value = paciente.direccion;
-          document.getElementById("correoInput").value = paciente.correo;
-          // Deshabilitar campos para paciente registrado
-          document.getElementById("dniInput").disabled = true;
-          document.getElementById("nombreInput").disabled = true;
-          document.getElementById("apellidoInput").disabled = true;
-          pacienteRegistrado = true;
-          verificarBotonRegistrar();
-          // Restaurar fondo normal
-          document.body.style.background = "";
-          btnNuevoPaciente.style.display = "none";
-          mostrarSeccionDatosPaciente(true);
-        } else {
-          mensaje.textContent = "❌ Paciente no encontrado.";
-          mensaje.style.color = "#ff9800";
-          // Limpiar campos
-          document.getElementById("dniInput").value = "";
-          document.getElementById("nombreInput").value = "";
-          document.getElementById("apellidoInput").value = "";
-          document.getElementById("telefonoInput").value = "";
-          document.getElementById("direccionInput").value = "";
-          document.getElementById("correoInput").value = "";
-          // Habilitar campos para nuevo paciente
-          document.getElementById("dniInput").disabled = false;
-          document.getElementById("nombreInput").disabled = false;
-          document.getElementById("apellidoInput").disabled = false;
-          pacienteRegistrado = false;
-          verificarBotonRegistrar();
-          // Fondo rojo más intenso en todo el body
-          document.body.style.background =
-            "linear-gradient(135deg, #ffcdd2 0%, #f44336 100%)";
-          btnNuevoPaciente.style.display = "block";
-          mostrarSeccionDatosPaciente(false);
-        }
-      }
+    	    const dni = document.getElementById("pacienteDni").value.trim();
+    	    const mensaje = document.getElementById("searchMessage");
+    	    const btnNuevoPaciente = document.getElementById("nuevoPacienteBtnContainer");
+    	    
+    	    // Validaciones
+    	    if (!dni) {
+    	        mostrarError("⚠️ Por favor, ingresa un DNI.");
+    	        btnNuevoPaciente.style.display = "none";
+    	        return;
+    	    }
+    	    
+    	    if (!/^\d{8}$/.test(dni)) {
+    	        mostrarError("⚠️ El DNI debe tener 8 dígitos numéricos.");
+    	        btnNuevoPaciente.style.display = "none";
+    	        return;
+    	    }
 
+    	    // Mostrar estado de carga
+    	    mensaje.textContent = "🔍 Buscando paciente...";
+    	    mensaje.style.color = "#2196F3";
+
+    	    // Configurar la petición con URL ABSOLUTA
+    	    const url = `http://localhost:8080/ProyectoWeb01/farmacia?accion=buscarPaciente&dni=${encodeURIComponent(dni)}`;
+    	    
+    	    // Opciones de la petición con CORS
+    	    const options = {
+    	        method: 'GET',
+    	        mode: 'cors', // Importante para peticiones entre contextos
+    	        headers: {
+    	            'Accept': 'application/json'
+    	        }
+    	    };
+
+    	    // Realizar la petición
+    	    fetch(url, options)
+    	        .then(response => {
+    	            if (!response.ok) {
+    	                throw new Error(`Error HTTP: ${response.status}`);
+    	            }
+    	            return response.json();
+    	        })
+    	        .then(data => {
+    	            if (data.error) {
+    	                throw new Error(data.error);
+    	            }
+    	            
+    	            // Autocompletar campos
+    	            document.getElementById("dniInput").value = data.dni || '';
+    	            document.getElementById("nombreInput").value = data.nombre || '';
+    	            document.getElementById("apellidoInput").value = data.apellido || '';
+    	            document.getElementById("telefonoInput").value = data.telefono || '';
+    	            document.getElementById("direccionInput").value = data.direccion || '';
+    	            document.getElementById("correoInput").value = data.correo || '';
+    	            document.getElementById("fechaNacInput").value = data.fecha_nacimiento || '';
+    	            
+    	            // Deshabilitar campos clave
+    	            document.getElementById("dniInput").disabled = true;
+    	            document.getElementById("nombreInput").disabled = true;
+    	            document.getElementById("apellidoInput").disabled = true;
+    	            
+    	            // Mostrar éxito
+    	            mensaje.textContent = "✅ Paciente encontrado";
+    	            mensaje.style.color = "#2e7d32";
+    	            btnNuevoPaciente.style.display = "none";
+    	            document.body.style.background = "";
+    	            
+    	            // Habilitar botón de registrar venta si hay productos
+    	            verificarBotonRegistrar();
+    	        })
+    	        .catch(error => {
+    	            console.error("Error en la búsqueda:", error);
+    	            
+    	            if (error.message.includes("404")) {
+    	                mostrarError("❌ Ruta no encontrada. Verifica la URL del servidor.");
+    	            } else if (error.message.includes("Failed to fetch")) {
+    	                mostrarError("❌ No se pudo conectar al servidor.");
+    	            } else {
+    	                mostrarError(`❌ ${error.message || "Error al buscar paciente"}`);
+    	            }
+    	            
+    	            // Mostrar botón para nuevo paciente si el error es "no encontrado"
+    	            if (error.message.includes("Paciente no encontrado")) {
+    	                btnNuevoPaciente.style.display = "block";
+    	            } else {
+    	                btnNuevoPaciente.style.display = "none";
+    	            }
+    	        });
+
+    	    function mostrarError(texto) {
+    	        mensaje.textContent = texto;
+    	        mensaje.style.color = "#f44336";
+    	        document.body.style.background = "linear-gradient(135deg, #ffcdd2 0%, #f44336 100%)";
+    	    }
+    	}
       function limpiarBusqueda() {
         document.getElementById("pacienteDni").value = "";
         document.getElementById("searchMessage").textContent = "";
@@ -950,74 +987,5 @@
         }, 1000);
       }
     </script>
-
-    <style>
-      .info-input {
-        background: rgba(227, 242, 253, 0.8);
-        padding: 8px 15px;
-        border-radius: 8px;
-        color: #0d47a1;
-        font-weight: 500;
-        flex: 1;
-        border: 2px solid rgba(144, 202, 249, 0.4);
-        font-size: 14px;
-      }
-
-      .info-input:focus {
-        outline: none;
-        border-color: #42a5f5;
-        background: #e3f2fd;
-      }
-
-      .info-input:disabled {
-        background: rgba(200, 200, 200, 0.3);
-        color: #666;
-      }
-
-      .quantity-input {
-        width: 80px;
-        padding: 6px 8px;
-        border: 2px solid rgba(144, 202, 249, 0.5);
-        border-radius: 6px;
-        text-align: center;
-        font-size: 14px;
-      }
-
-      .quantity-input:focus {
-        outline: none;
-        border-color: #42a5f5;
-      }
-
-      .medicamento-resultados {
-        margin-top: 20px;
-      }
-
-      .medicamento-resultados h4 {
-        color: #1565c0;
-        margin-bottom: 15px;
-        font-size: 16px;
-      }
-
-      .action-btn {
-        background: rgba(255, 255, 255, 0.9);
-        border: 1px solid rgba(144, 202, 249, 0.5);
-        padding: 6px 10px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-        margin: 0 3px;
-        transition: all 0.3s ease;
-      }
-
-      .action-btn:hover {
-        transform: translateY(-1px);
-      }
-
-      .primary-button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        transform: none;
-      }
-    </style>
   </body>
 </html>

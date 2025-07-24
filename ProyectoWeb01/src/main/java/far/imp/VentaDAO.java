@@ -36,4 +36,20 @@ public class VentaDAO {
             throw e; // Propagar la excepción
         }
     }
+    
+    public void registrarVentaSinReceta(FacturaEmitidaJPA factura, DetalleFacturaEmitidaJPA detalle) {
+        EntityTransaction transaction = em.getTransaction();
+        try {
+            transaction.begin();
+            em.persist(factura);
+            em.persist(detalle);
+            transaction.commit();
+        } catch (Exception e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
+            throw e;
+        }
+    }
+
 }

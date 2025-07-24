@@ -25,6 +25,7 @@ import jakarta.persistence.Persistence;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import com.google.gson.Gson;
@@ -66,6 +67,10 @@ public class FarmaciaServlet extends HttpServlet {
                     break;
                 default:
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Acción POST no reconocida: " + accion);
+                case "registrarventasinreceta":
+                    registrarVentaSinReceta(request, response);
+                    break;
+                    
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,7 +84,11 @@ public class FarmaciaServlet extends HttpServlet {
 
         String accion = request.getParameter("accion");
 
-        if ("sesion".equalsIgnoreCase(accion)) {
+        if (accion == null || accion.isBlank()) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\": \"Acción no especificada\"}");
+        } 
+        else if ("sesion".equalsIgnoreCase(accion)) {
             HttpSession session = request.getSession(false);
             if (session != null && session.getAttribute("usuarioLogueado") != null) {
                 String usuario = (String) session.getAttribute("usuarioLogueado");
@@ -94,11 +103,14 @@ public class FarmaciaServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("{\"error\": \"Sesión no activa\"}");
             }
-
-        } else if ("buscarreceta".equalsIgnoreCase(accion)) {
+        } 
+        else if ("buscarreceta".equalsIgnoreCase(accion)) {
             buscarReceta(request, response);
-
-        } else {
+        } 
+        else if ("buscarpaciente".equalsIgnoreCase(accion)) {
+            buscarPaciente(request, response);
+        } 
+        else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"error\": \"Acción GET no reconocida\"}");
         }
@@ -176,7 +188,118 @@ public class FarmaciaServlet extends HttpServlet {
             em.close();
         }
     }
-    
+    private void buscarPaciente(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        EntityManager em = null;
+        try {
+            // Configuración CORS
+            response.setHeader("Access-Control-Allow-Origin", "*");
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            
+            String dni = request.getParameter("dni");
+            System.out.println("Buscando paciente con DNI: " + dni); // Log para depuración
+            
+            if (dni == null || dni.trim().isEmpty()) {
+                response.getWriter().write("{\"error\":\"DNI no proporcionado\"}");
+                return;
+            }
+
+            em = emf.createEntityManager();
+            
+            // Consulta optimizada
+            PacienteJPA paciente = em.createQuery(
+                "SELECT p FROM PacienteJPA p WHERE p.dni = :dni", PacienteJPA.class)
+                .setParameter("dni", dni)
+                .getResultStream()
+                .findFirst()
+                .orElse(null);
+
+            if (paciente == null) {
+                response.getWriter().write("{\"error\":\"Paciente no encontrado\"}");
+                return;
+            }
+
+            // Formatear fecha correctamente
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String fechaNacimiento = paciente.getFechaNacimiento() != null ? 
+                sdf.format(paciente.getFechaNacimiento()) : "";
+
+            // Crear respuesta JSON
+            String json = String.format(
+                "{\"dni\":\"%s\", \"nombre\":\"%s\", \"apellido\":\"%s\", " +
+                "\"telefono\":\"%s\", \"direccion\":\"%s\", \"correo\":\"%s\", " +
+                "\"fecha_nacimiento\":\"%s\"}",
+                paciente.getDni(),
+                paciente.getNombre(),
+                paciente.getApellido(),
+                paciente.getTelefono() != null ? paciente.getTelefono() : "",
+                paciente.getDireccion() != null ? paciente.getDireccion() : "",
+                paciente.getCorreo() != null ? paciente.getCorreo() : "",
+                fechaNacimiento
+            );
+            
+            response.getWriter().write(json);
+            
+        } catch (Exception e) {
+            System.err.println("Error al buscar paciente: " + e.getMessage());
+            e.printStackTrace();
+            response.getWriter().write("{\"error\":\"Error interno del servidor\"}");
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
+    }
+    private void registrarVentaSinReceta(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        EntityManager em = emf.createEntityManager();
+        try {
+            // Recibe datos desde el formulario HTML (AJAX o post clásico)
+            String productoNombre = request.getParameter("producto");
+            int cantidad = Integer.parseInt(request.getParameter("cantidad"));
+            String formaPago = request.getParameter("formaPago");
+
+            // Buscar producto por nombre o ID (ajustar según tu modelo)
+            ProductoJPA producto = em.createQuery(
+                "SELECT p FROM ProductoJPA p WHERE p.nombre = :nombre", ProductoJPA.class)
+                .setParameter("nombre", productoNombre)
+                .getSingleResult();
+
+            if (producto == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Producto no encontrado.");
+                return;
+            }
+
+            // Crear factura
+            FacturaEmitidaJPA factura = new FacturaEmitidaJPA();
+            factura.setFechaEmision(new Date());
+            factura.setPaciente(null); // No hay paciente para venta sin receta
+            factura.setFormaPago(formaPago);
+            factura.setEstadoPago("Pendiente");
+            factura.setTipoVenta("Sin receta");
+            factura.setTotal(producto.getPrecio().multiply(new BigDecimal(cantidad)));
+
+            // Crear detalle
+            DetalleFacturaEmitidaJPA detalle = new DetalleFacturaEmitidaJPA();
+            detalle.setProducto(producto);
+            detalle.setCantidad(cantidad);
+            detalle.setPrecioUnitario(producto.getPrecio());
+            detalle.setFactura(factura);
+
+            // Registrar venta
+            VentaDAO ventaDAO = new VentaDAO(em);
+            ventaDAO.registrarVentaSinReceta(factura, detalle); // Ver más abajo
+
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.getWriter().write("{\"mensaje\":\"Venta sin receta registrada con éxito.\"}");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error al registrar la venta sin receta.");
+        } finally {
+            em.close();
+        }
+    }
+
 	@Override
     public void destroy() {
         if (emf != null && emf.isOpen()) {
