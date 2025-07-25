@@ -811,3 +811,124 @@ header h1 {
         padding: 25px;
       }
     }
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f0f2f5;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background: #007BFF;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  position: relative;
+}
+
+.back-button {
+  display: inline-block;
+  margin-top: 15px;
+  background-color: white;
+  color: #007BFF;
+  border: 2px solid #007BFF;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #007BFF;
+  color: white;
+}
+
+.main-container {
+  max-width: 900px;
+  margin: auto;
+  padding: 30px 15px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.sale-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.patient-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px;
+}
+
+.info-item {
+  background: #f7f9fb;
+  padding: 10px;
+  border-radius: 8px;
+  color: #333;
+}
+
+.toggle-button {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-button:hover {
+  background-color: #0056b3;
+}
+
+.hidden-section {
+  display: none;
+  margin-top: 20px;
+}
+
+.products-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.products-table th,
+.products-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+}
+
+.products-table th {
+  background: #f0f0f0;
+}
+
+.total-label {
+  text-align: right;
+  font-weight: bold;
+}
+
+.total-amount {
+  font-weight: bold;
+  color: green;
+}
+
+.no-patient {
+  font-style: italic;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 6px;
+}
