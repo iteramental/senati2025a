@@ -28,7 +28,12 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
 
 @WebServlet("/farmacia")
 public class FarmaciaServlet extends HttpServlet {
@@ -82,6 +87,9 @@ public class FarmaciaServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+    	request.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json;charset=UTF-8");
+        
         String accion = request.getParameter("accion");
 
         if (accion == null || accion.isBlank()) {
@@ -104,6 +112,9 @@ public class FarmaciaServlet extends HttpServlet {
                 response.getWriter().write("{\"error\": \"Sesión no activa\"}");
             }
         } 
+        else if ("buscarMedicamento".equalsIgnoreCase(accion)) { // ← Añade este caso
+            buscarMedicamento(request, response);
+        }
         else if ("buscarreceta".equalsIgnoreCase(accion)) {
             buscarReceta(request, response);
         } 
@@ -250,51 +261,136 @@ public class FarmaciaServlet extends HttpServlet {
             }
         }
     }
-    private void registrarVentaSinReceta(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void buscarMedicamento(HttpServletRequest request, HttpServletResponse response) throws IOException {
         EntityManager em = emf.createEntityManager();
         try {
-            // Recibe datos desde el formulario HTML (AJAX o post clásico)
-            String productoNombre = request.getParameter("producto");
-            int cantidad = Integer.parseInt(request.getParameter("cantidad"));
-            String formaPago = request.getParameter("formaPago");
+            request.setCharacterEncoding("UTF-8");
+            response.setContentType("application/json;charset=UTF-8");
+            
+            String nombre = request.getParameter("nombre");
+            System.out.println("Buscando medicamento: " + nombre);
 
-            // Buscar producto por nombre o ID (ajustar según tu modelo)
-            ProductoJPA producto = em.createQuery(
-                "SELECT p FROM ProductoJPA p WHERE p.nombre = :nombre", ProductoJPA.class)
-                .setParameter("nombre", productoNombre)
-                .getSingleResult();
+            // CONSULTA CORREGIDA (versión simplificada y funcional)
+            String jpql = "SELECT p FROM ProductoJPA p \r\n"
+            		+ "WHERE (\r\n"
+            		+ "  LOWER(p.nombreBase) LIKE LOWER(CONCAT('%', :nombre, '%')) \r\n"
+            		+ "  OR LOWER(p.nombreComercial) LIKE LOWER(CONCAT('%', :nombre, '%'))\r\n"
+            		+ ") \r\n"
+            		+ "ORDER BY p.nombreComercial, p.nombreBase\r\n"
+            		+ "";
 
-            if (producto == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Producto no encontrado.");
-                return;
+            System.out.println("JPQL: " + jpql); // Para debug
+            
+            List<ProductoJPA> productos = em.createQuery(jpql, ProductoJPA.class)
+                .setParameter("nombre", nombre)
+                .getResultList();
+
+            Gson gson = new Gson();
+            JsonArray jsonArray = new JsonArray();
+            
+            for (ProductoJPA p : productos) {
+                JsonObject json = new JsonObject();
+                json.addProperty("idProducto", p.getIdProducto());
+                json.addProperty("nombreBase", p.getNombreBase());
+                json.addProperty("nombreComercial", p.getNombreComercial());
+                json.addProperty("concentracion", p.getConcentracion());
+                json.addProperty("precio", p.getPrecio());
+                json.addProperty("stock", p.getStock());
+                jsonArray.add(json);
             }
 
-            // Crear factura
-            FacturaEmitidaJPA factura = new FacturaEmitidaJPA();
-            factura.setFechaEmision(new Date());
-            factura.setPaciente(null); // No hay paciente para venta sin receta
-            factura.setFormaPago(formaPago);
-            factura.setEstadoPago("Pendiente");
-            factura.setTipoVenta("Sin receta");
-            factura.setTotal(producto.getPrecio().multiply(new BigDecimal(cantidad)));
-
-            // Crear detalle
-            DetalleFacturaEmitidaJPA detalle = new DetalleFacturaEmitidaJPA();
-            detalle.setProducto(producto);
-            detalle.setCantidad(cantidad);
-            detalle.setPrecioUnitario(producto.getPrecio());
-            detalle.setFactura(factura);
-
-            // Registrar venta
-            VentaDAO ventaDAO = new VentaDAO(em);
-            ventaDAO.registrarVentaSinReceta(factura, detalle); // Ver más abajo
-
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().write("{\"mensaje\":\"Venta sin receta registrada con éxito.\"}");
+            response.getWriter().write(gson.toJson(jsonArray));
 
         } catch (Exception e) {
+            System.err.println("Error al buscar medicamentos: " + e.getMessage());
+            JsonObject error = new JsonObject();
+            error.addProperty("error", "Error al buscar medicamentos: " + e.getMessage());
+            response.getWriter().write(error.toString());
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } finally {
+            em.close();
+        }
+    }
+    private void registrarVentaSinReceta(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction transaction = em.getTransaction();
+        
+        try {
+            // 1. Parsear los datos JSON
+            String json = request.getReader().lines().collect(Collectors.joining());
+            Gson gson = new Gson();
+            Map<String, Object> ventaData = gson.fromJson(json, Map.class);
+
+            // 2. Buscar paciente
+            String dniPaciente = (String) ventaData.get("dniPaciente");
+            PacienteJPA paciente = em.createQuery(
+                "SELECT p FROM PacienteJPA p WHERE p.dni = :dni", PacienteJPA.class)
+                .setParameter("dni", dniPaciente)
+                .getSingleResult();
+
+            // 3. Crear factura
+            transaction.begin();
+            
+            FacturaEmitidaJPA factura = new FacturaEmitidaJPA();
+            factura.setFechaEmision(new Date());
+            factura.setPaciente(paciente);
+            factura.setTotal(new BigDecimal(ventaData.get("total").toString()));
+            factura.setFormaPago((String) ventaData.get("formaPago"));
+            factura.setEstadoPago("Pagado");
+            factura.setContabilizada("N");
+            factura.setTipoVenta("Externo");
+            factura.setCreatedAt(new Date());
+            factura.setUpdatedAt(new Date());
+            factura.setIdDepartamento(1); // Ajustar según tu lógica
+
+            em.persist(factura);
+
+            // 4. Procesar cada producto del carrito
+            List<Map<String, Object>> productos = (List<Map<String, Object>>) ventaData.get("productos");
+            for (Map<String, Object> item : productos) {
+                int idProducto = ((Double) item.get("idProducto")).intValue();
+                ProductoJPA producto = em.find(ProductoJPA.class, idProducto);
+                
+                // Validar stock
+                int cantidad = ((Double) item.get("cantidad")).intValue();
+                if (producto.getStock() < cantidad) {
+                    throw new RuntimeException("Stock insuficiente para: " + producto.getNombreComercial());
+                }
+
+                // Crear detalle
+                DetalleFacturaEmitidaJPA detalle = new DetalleFacturaEmitidaJPA();
+                detalle.setFactura(factura);
+                detalle.setTipoItem("Producto");
+                detalle.setProducto(producto);
+                detalle.setDescripcion(producto.getNombreComercial());
+                detalle.setCantidad(cantidad);
+                
+                BigDecimal precioUnitario = new BigDecimal(item.get("precioUnitario").toString());
+                detalle.setPrecioUnitario(precioUnitario);
+                detalle.setSubtotal(precioUnitario.multiply(new BigDecimal(cantidad)));
+                detalle.setCreatedAt(new Date());
+                detalle.setUpdatedAt(new Date());
+
+                em.persist(detalle);
+                
+                // Actualizar stock
+                producto.setStock(producto.getStock() - cantidad);
+                em.merge(producto);
+            }
+
+            transaction.commit();
+
+            // Respuesta exitosa
+            response.setContentType("application/json");
+            response.getWriter().write("{\"success\": true, \"idFactura\": " + factura.getIdFactura() + "}");
+
+        } catch (Exception e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
             e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error al registrar la venta sin receta.");
         } finally {
             em.close();
         }

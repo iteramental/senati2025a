@@ -675,109 +675,130 @@
       }
 
       function buscarMedicamento() {
-        const nombre = document
-          .getElementById("medicamentoNombre")
-          .value.trim();
-        const mensaje = document.getElementById("medicamentoMessage");
-        const resultados = document.getElementById("medicamentoResultados");
-        const lista = document.getElementById("medicamentosList");
+    	    const nombre = document.getElementById("medicamentoNombre").value.trim();
+    	    const mensaje = document.getElementById("medicamentoMessage");
+    	    
+    	    if (!nombre) {
+    	        mensaje.textContent = "⚠️ Ingrese un nombre de medicamento";
+    	        mensaje.style.color = "#f44336";
+    	        return;
+    	    }
 
-        if (nombre === "") {
-          mensaje.textContent =
-            "⚠️ Por favor, ingresa el nombre del medicamento.";
-          mensaje.style.color = "#f44336";
-          resultados.style.display = "none";
-          return;
-        }
+    	    mensaje.textContent = "🔍 Buscando...";
+    	    mensaje.style.color = "#2196F3";
 
-        // Buscar medicamentos que contengan el nombre
-        const encontrados = medicamentos.filter((med) =>
-          med.nombre.toLowerCase().includes(nombre.toLowerCase())
-        );
+    	    // Limpiar resultados anteriores
+    	    document.getElementById("medicamentosList").innerHTML = "";
+    	    
+    	    // Codificar el parámetro para URL
+    	    const nombreCodificado = encodeURIComponent(nombre);
+    	    const url = `http://localhost:8080/ProyectoWeb01/farmacia?accion=buscarMedicamento&nombre=${nombreCodificado}`;
+    	    
+    	    console.log("URL de búsqueda:", url); // Debug
 
-        if (encontrados.length > 0) {
-          mensaje.textContent = `✅ ${encontrados.length} medicamento(s) encontrado(s).`;
-          mensaje.style.color = "#2e7d32";
+    	    fetch(url)
+    	    .then(response => {
+    	        if (!response.ok) {
+    	            throw new Error(`Error HTTP: ${response.status}`);
+    	        }
+    	        return response.json();
+    	    })
+    	    .then(data => {
+    	        console.log("Respuesta recibida:", data); // Debug
+    	        
+    	        const lista = document.getElementById("medicamentosList");
+    	        
+    	        if (!data || data.length === 0) {
+    	            mensaje.textContent = "❌ No se encontraron medicamentos";
+    	            mensaje.style.color = "#f44336";
+    	            return;
+    	        }
+    	        
+    	        mensaje.textContent = `✅ ${data.length} medicamento(s) encontrado(s)`;
+    	        mensaje.style.color = "#4CAF50";
+    	        
+    	        data.forEach(med => {
+    	            const nombreMostrar = med.nombreComercial || med.nombreBase || "Sin nombre";
+    	            const concentracion = med.concentracion || "";
+    	            const stock = med.stock || 0;
+    	            const precio = med.precio ? med.precio.toFixed(2) : "0.00";
+    	            const id = med.idProducto || 0;
 
-          // Mostrar resultados
-          lista.innerHTML = "";
-          encontrados.forEach((med) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-            <td>
-              <div class="product-info">
-                <strong>${med.nombre}</strong>
-                <small>${med.descripcion}</small>
-              </div>
-            </td>
-            <td>
-              <span class="quantity-badge">${med.stock}</span>
-            </td>
-            <td>S/ ${med.precio.toFixed(2)}</td>
-            <td>
-              <input type="number" min="1" max="${
-                med.stock
-              }" value="1" class="quantity-input" id="qty-${med.id}">
-            </td>
-            <td>
-              <button class="action-btn" onclick="agregarAlCarrito(${
-                med.id
-              })" style="background: #4caf50; color: white;">➕ Agregar</button>
-            </td>
-          `;
-            lista.appendChild(row);
-          });
+    	            const row = `
+    	            <tr>
+    	                <td>
+    	                    <div class="product-info">
+    	                        <strong>${nombreMostrar}</strong>
+    	                        <small>${concentracion}</small>
+    	                    </div>
+    	                </td>
+    	                <td><span class="quantity-badge">${stock}</span></td>
+    	                <td>S/ ${precio}</td>
+    	                <td>
+    	                    <input type="number" min="1" max="${stock}" 
+    	                           value="1" class="quantity-input" 
+    	                           id="qty-${id}">
+    	                </td>
+    	                <td>
+    	                    <button class="action-btn" 
+    	                            onclick="agregarAlCarrito(${id}, '${escapeHtml(nombreMostrar)}', ${med.precio || 0}, ${stock})"
+    	                            ${stock <= 0 ? 'disabled' : ''}>
+    	                        ${stock <= 0 ? '❌ Sin stock' : '➕ Agregar'}
+    	                    </button>
+    	                </td>
+    	            </tr>`;
+    	            lista.insertAdjacentHTML('beforeend', row);
+    	        });
+    	        
+    	        document.getElementById("medicamentoResultados").style.display = "block";
+    	    })
+    	    .catch(error => {
+    	        console.error("Error en la búsqueda:", error);
+    	        mensaje.textContent = `❌ ${error.message}`;
+    	        mensaje.style.color = "#f44336";
+    	    });
+    	}
 
-          resultados.style.display = "block";
-        } else {
-          mensaje.textContent = "❌ No se encontraron medicamentos.";
-          mensaje.style.color = "#f44336";
-          resultados.style.display = "none";
-        }
-      }
+    	// Función auxiliar para escape de HTML
+    	function escapeHtml(text) {
+    	    return text
+    	        .replace(/&/g, "&amp;")
+    	        .replace(/</g, "&lt;")
+    	        .replace(/>/g, "&gt;")
+    	        .replace(/"/g, "&quot;")
+    	        .replace(/'/g, "&#039;");
+    	}
 
-      function agregarAlCarrito(medicamentoId) {
-        const medicamento = medicamentos.find((m) => m.id === medicamentoId);
-        const cantidad = parseInt(
-          document.getElementById(`qty-${medicamentoId}`).value
-        );
+      function agregarAlCarrito(id, nombre, precio, stockMax) {
+    	    const cantidad = parseInt(document.getElementById(`qty-${id}`).value);
+    	    
+    	    if (cantidad > stockMax) {
+    	        alert("❌ Cantidad solicitada excede el stock disponible.");
+    	        return;
+    	    }
 
-        if (cantidad > medicamento.stock) {
-          alert("❌ Cantidad solicitada excede el stock disponible.");
-          return;
-        }
+    	    const existeEnCarrito = carrito.find(item => item.id === id);
 
-        // Verificar si ya existe en el carrito
-        const existeEnCarrito = carrito.find(
-          (item) => item.id === medicamentoId
-        );
+    	    if (existeEnCarrito) {
+    	        if ((existeEnCarrito.cantidad + cantidad) > stockMax) {
+    	            alert("❌ La cantidad total excede el stock disponible.");
+    	            return;
+    	        }
+    	        existeEnCarrito.cantidad += cantidad;
+    	        existeEnCarrito.subtotal = existeEnCarrito.cantidad * precio;
+    	    } else {
+    	        carrito.push({
+    	            id: id,
+    	            nombre: nombre,
+    	            precio: precio,
+    	            cantidad: cantidad,
+    	            subtotal: cantidad * precio
+    	        });
+    	    }
 
-        if (existeEnCarrito) {
-          existeEnCarrito.cantidad += cantidad;
-          existeEnCarrito.subtotal =
-            existeEnCarrito.cantidad * existeEnCarrito.precio;
-        } else {
-          carrito.push({
-            id: medicamentoId,
-            nombre: medicamento.nombre,
-            descripcion: medicamento.descripcion,
-            precio: medicamento.precio,
-            cantidad: cantidad,
-            subtotal: cantidad * medicamento.precio,
-          });
-        }
-
-        actualizarCarrito();
-
-        // Mostrar mensaje de éxito
-        const mensaje = document.getElementById("medicamentoMessage");
-        mensaje.textContent = "✅ Medicamento agregado al carrito.";
-        mensaje.style.color = "#2e7d32";
-
-        setTimeout(() => {
-          mensaje.textContent = "";
-        }, 2000);
-      }
+    	    actualizarCarrito();
+    	    mostrarMensajeExito();
+    	}
 
       function actualizarCarrito() {
         const lista = document.getElementById("carritoList");
@@ -911,81 +932,59 @@
       });
 
       function registrarVenta() {
-        if (carrito.length === 0) {
-          alert("❌ El carrito está vacío.");
-          return;
-        }
+    	    if (carrito.length === 0) {
+    	        alert("❌ El carrito está vacío.");
+    	        return;
+    	    }
 
-        // Obtener datos del paciente
-        const paciente = {
-          nombre: document.getElementById("nombreInput").value,
-          apellido: document.getElementById("apellidoInput").value,
-          dni: document.getElementById("dniInput").value,
-          fechaNac: document.getElementById("fechaNacInput").value,
-          telefono: document.getElementById("telefonoInput").value,
-          correo: document.getElementById("correoInput").value,
-          direccion: document.getElementById("direccionInput").value,
-        };
+    	    const btnRegistrar = document.getElementById("btnRegistrar");
+    	    btnRegistrar.disabled = true;
+    	    btnRegistrar.textContent = "Procesando...";
 
-        // Si el paciente no está registrado, guardarlo en localStorage
-        if (!pacientes[paciente.dni]) {
-          pacientes[paciente.dni] = paciente;
-          localStorage.setItem("pacientesFarmacia", JSON.stringify(pacientes));
-        }
+    	    const ventaData = {
+    	        dniPaciente: document.getElementById("dniInput").value,
+    	        formaPago: "Efectivo", // Puedes cambiarlo por un select
+    	        productos: carrito.map(item => ({
+    	            idProducto: item.id,
+    	            cantidad: item.cantidad,
+    	            precioUnitario: item.precio
+    	        })),
+    	        total: totalVenta
+    	    };
 
-        // Obtener productos del carrito
-        const productos = carrito.map((item) => ({
-          nombre: item.nombre,
-          cantidad: item.cantidad,
-          precio: item.precio,
-        }));
-
-        // Calcular total
-        let total = 0;
-        productos.forEach((p) => {
-          total += p.precio * p.cantidad;
-        });
-
-        // Guardar en historialVentas
-        const venta = {
-          paciente,
-          productos,
-          total,
-          fecha: new Date().toLocaleString("es-PE", {
-            dateStyle: "short",
-            timeStyle: "short",
-          }),
-          conReceta: false,
-        };
-        const historial =
-          JSON.parse(localStorage.getItem("historialVentas")) || [];
-        historial.push(venta);
-        localStorage.setItem("historialVentas", JSON.stringify(historial));
-
-        const button = document.querySelector(".primary-button");
-        const originalText = button.textContent;
-
-        button.textContent = "✅ Procesando...";
-        button.disabled = true;
-
-        setTimeout(() => {
-          button.textContent = "🎉 Venta Registrada Exitosamente";
-          setTimeout(() => {
-            carrito = [];
-            totalVenta = 0;
-            actualizarCarrito();
-            limpiarBusqueda();
-            document.getElementById("medicamentoNombre").value = "";
-            document.getElementById("medicamentoMessage").textContent = "";
-            document.getElementById("medicamentoResultados").style.display =
-              "none";
-            button.textContent = originalText;
-            button.disabled = false;
-            // Redirigir a la factura/boleta
-            window.location.href = "registro_pago.html";
-          }, 1200);
-        }, 1000);
-      }
+    	    fetch('http://localhost:8080/ProyectoWeb01/farmacia?accion=registrarVentaSinReceta', {
+    	        method: 'POST',
+    	        headers: {
+    	            'Content-Type': 'application/json',
+    	        },
+    	        body: JSON.stringify(ventaData)
+    	    })
+    	    .then(response => {
+    	        if (!response.ok) throw new Error("Error en el servidor: " + response.status);
+    	        return response.json();
+    	    })
+    	    .then(data => {
+    	        if (data.error) throw new Error(data.error);
+    	        
+    	        // Éxito - Resetear todo
+    	        alert(`✅ Venta registrada (Factura #${data.idFactura})`);
+    	        carrito = [];
+    	        totalVenta = 0;
+    	        actualizarCarrito();
+    	        limpiarBusqueda();
+    	        
+    	        // Opcional: Redirigir a comprobante
+    	        // window.location.href = `factura.html?id=${data.idFactura}`;
+    	    })
+    	    .catch(error => {
+    	        console.error("Error:", error);
+    	        alert(`❌ Error al registrar: ${error.message}`);
+    	    })
+    	    .finally(() => {
+    	        btnRegistrar.textContent = "✅ Registrar Venta";
+    	        btnRegistrar.disabled = false;
+    	    });
+    	}
     </script>
   </body>
 </html>

@@ -46,6 +46,9 @@ public class ProductoJPA {
 
     @Column(name = "updated_at")
     private Timestamp updatedAt;
+    
+    @Column(name = "stock")
+    private Integer stock;
 
     @ManyToOne
     @JoinColumn(name = "created_by")
@@ -140,12 +143,16 @@ public class ProductoJPA {
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
-
     public FarmaceuticoJPA getCreadoPor() {
         return creadoPor;
     }
-
     public void setCreadoPor(FarmaceuticoJPA creadoPor) {
         this.creadoPor = creadoPor;
+    }
+    public Integer getStock() {
+        return stock;
+    }
+    public void setStock(Integer stock) {
+        this.stock = stock;
     }
 }
