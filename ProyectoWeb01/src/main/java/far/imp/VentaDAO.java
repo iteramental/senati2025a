@@ -10,6 +10,11 @@ import jakarta.persistence.EntityTransaction;
 
 public class VentaDAO {
     private EntityManager em;
+    
+    public List<FacturaEmitidaJPA> listarVentas() {
+        return em.createQuery("SELECT f FROM FacturaEmitidaJPA f ORDER BY f.fechaEmision DESC", FacturaEmitidaJPA.class)
+                 .getResultList();
+    }
 
     public VentaDAO(EntityManager em) {
         this.em = em;

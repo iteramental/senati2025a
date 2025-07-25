@@ -87,7 +87,7 @@ public class FarmaciaServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-    	request.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("UTF-8");
         response.setContentType("application/json;charset=UTF-8");
         
         String accion = request.getParameter("accion");
@@ -112,7 +112,7 @@ public class FarmaciaServlet extends HttpServlet {
                 response.getWriter().write("{\"error\": \"Sesión no activa\"}");
             }
         } 
-        else if ("buscarMedicamento".equalsIgnoreCase(accion)) { // ← Añade este caso
+        else if ("buscarMedicamento".equalsIgnoreCase(accion)) {
             buscarMedicamento(request, response);
         }
         else if ("buscarreceta".equalsIgnoreCase(accion)) {
@@ -121,6 +121,37 @@ public class FarmaciaServlet extends HttpServlet {
         else if ("buscarpaciente".equalsIgnoreCase(accion)) {
             buscarPaciente(request, response);
         } 
+        else if ("listarhistorial".equalsIgnoreCase(accion)) {
+            // 🚨 Aquí se lista el historial de ventas
+            EntityManager em = emf.createEntityManager();
+            try {
+                List<FacturaEmitidaJPA> facturas = em.createQuery("SELECT f FROM FacturaEmitidaJPA f ORDER BY f.fechaEmision DESC", FacturaEmitidaJPA.class)
+                                                     .getResultList();
+
+                JsonArray jsonArray = new JsonArray();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+                for (FacturaEmitidaJPA f : facturas) {
+                    JsonObject obj = new JsonObject();
+                    obj.addProperty("idFactura", f.getIdFactura());
+                    obj.addProperty("fechaEmision", sdf.format(f.getFechaEmision()));
+                    obj.addProperty("paciente", f.getPaciente() != null ? f.getPaciente().getNombre() + " " + f.getPaciente().getApellido() : "Sin paciente");
+                    obj.addProperty("total", f.getTotal().toPlainString());
+                    obj.addProperty("formaPago", f.getFormaPago());
+                    obj.addProperty("estadoPago", f.getEstadoPago());
+                    obj.addProperty("tipoVenta", f.getTipoVenta());
+                    jsonArray.add(obj);
+                }
+
+                response.getWriter().write(jsonArray.toString());
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().write("{\"error\": \"Error al obtener historial\"}");
+                e.printStackTrace();
+            } finally {
+                em.close();
+            }
+        }
         else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"error\": \"Acción GET no reconocida\"}");
