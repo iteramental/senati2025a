@@ -1,277 +1,294 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historial de Ventas - Farmacia</title>
-  <link rel="stylesheet" href="source/estilos_farmacia.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Historial de Ventas - Farmacia</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #007BFF;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .main-container {
+      max-width: 900px;
+      margin: auto;
+      padding: 30px 15px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .sale-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      color: #555;
+      margin-bottom: 15px;
+    }
+
+    .patient-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 10px;
+    }
+
+    .info-item {
+      background: #f7f9fb;
+      padding: 10px;
+      border-radius: 8px;
+      color: #333;
+    }
+
+    .toggle-button {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+
+    .toggle-button:hover {
+      background-color: #0056b3;
+    }
+
+    .hidden-section {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .products-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .products-table th, .products-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .products-table th {
+      background: #f0f0f0;
+    }
+
+    .total-label {
+      text-align: right;
+      font-weight: bold;
+    }
+
+    .total-amount {
+      font-weight: bold;
+      color: green;
+    }
+
+    .no-patient {
+      font-style: italic;
+      padding: 10px;
+      background: #f9f9f9;
+      border-radius: 6px;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Historial de Ventas - Farmacia</h1>
-    </header>
+  <header>
+    <h1>Historial de Ventas - Farmacia</h1>
+  </header>
 
-    <div class="main-container">
-        <!-- Botón de regreso al index -->
-        <div class="button-container" style="margin-bottom: 30px; text-align: left;">
-            <a href="dashboard_farmacia.html" class="primary-button" style="padding: 12px 25px; display: inline-flex; align-items: center; text-decoration: none;">
-                ← Volver
-            </a>
+  <div class="main-container">
+
+    <!-- Venta #001 -->
+    <div class="card">
+      <div class="sale-header">
+        <span>Venta #001</span>
+        <span>15/07/2023 10:30 AM</span>
+      </div>
+
+      <div class="patient-grid">
+        <div class="info-item"><strong>DNI:</strong> 12345678</div>
+        <div class="info-item"><strong>Nombre:</strong> María García</div>
+        <div class="info-item"><strong>Teléfono:</strong> 987654321</div>
+      </div>
+
+      <button class="toggle-button" onclick="toggleDetails(this)">Ver más detalles</button>
+      <div class="hidden-section">
+        <div class="patient-grid" style="margin-top: 10px;">
+          <div class="info-item"><strong>Dirección:</strong> Av. Lima 456</div>
+          <div class="info-item"><strong>Correo:</strong> maria.garcia@email.com</div>
         </div>
 
-        <!-- Venta 1 -->
-        <div class="card">
-            <div class="sale-header">
-                <span class="sale-id">Venta #001</span>
-                <span class="sale-date">15/07/2023 10:30 AM</span>
-            </div>
-            
-            <div class="card-header">
-                <div class="card-icon">👤</div>
-                <h2 class="card-title">Información del Paciente</h2>
-            </div>
-            
-            <div class="patient-grid">
-                <div class="info-item">
-                    <span class="info-label">DNI:</span>
-                    <span class="info-value">12345678</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Nombre:</span>
-                    <span class="info-value">María García</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Teléfono:</span>
-                    <span class="info-value">987654321</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Dirección:</span>
-                    <span class="info-value">Av. Lima 456</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Correo:</span>
-                    <span class="info-value">maria.garcia@email.com</span>
-                </div>
-            </div>
-            
-            <div class="card-header" style="margin-top: 25px;">
-                <div class="card-icon">💊</div>
-                <h2 class="card-title">Productos Vendidos</h2>
-            </div>
-            
-            <div class="table-container">
-                <table class="products-table">
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Descripción</th>
-                            <th>Cantidad</th>
-                            <th>Precio Unit.</th>
-                            <th>Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div class="product-info">
-                                    <strong>Paracetamol 500mg</strong>
-                                    <small>Tabletas</small>
-                                </div>
-                            </td>
-                            <td>Analgésico</td>
-                            <td><span class="quantity-badge">2</span></td>
-                            <td>S/8.50</td>
-                            <td class="subtotal">S/17.00</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="product-info">
-                                    <strong>Omeprazol 20mg</strong>
-                                    <small>Cápsulas</small>
-                                </div>
-                            </td>
-                            <td>Antiácido</td>
-                            <td><span class="quantity-badge">1</span></td>
-                            <td>S/15.00</td>
-                            <td class="subtotal">S/15.00</td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="4" class="total-label">Total:</td>
-                            <td class="total-amount">S/32.00</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-
-        <!-- Venta 2 -->
-        <div class="card">
-            <div class="sale-header">
-                <span class="sale-id">Venta #002</span>
-                <span class="sale-date">14/07/2023 04:15 PM</span>
-            </div>
-            
-            <div class="card-header">
-                <div class="card-icon">👤</div>
-                <h2 class="card-title">Información del Paciente</h2>
-            </div>
-            
-            <div class="patient-grid">
-                <div class="info-item">
-                    <span class="info-label">DNI:</span>
-                    <span class="info-value">87654321</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Nombre:</span>
-                    <span class="info-value">Carlos Rodríguez</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Teléfono:</span>
-                    <span class="info-value">912345678</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Dirección:</span>
-                    <span class="info-value">Jr. Cusco 789</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Correo:</span>
-                    <span class="info-value">carlos.rodriguez@email.com</span>
-                </div>
-            </div>
-            
-            <div class="card-header" style="margin-top: 25px;">
-                <div class="card-icon">💊</div>
-                <h2 class="card-title">Productos Vendidos</h2>
-            </div>
-            
-            <div class="table-container">
-                <table class="products-table">
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Descripción</th>
-                            <th>Cantidad</th>
-                            <th>Precio Unit.</th>
-                            <th>Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div class="product-info">
-                                    <strong>Ibuprofeno 400mg</strong>
-                                    <small>Tabletas</small>
-                                </div>
-                            </td>
-                            <td>Analgésico</td>
-                            <td><span class="quantity-badge">3</span></td>
-                            <td>S/9.80</td>
-                            <td class="subtotal">S/29.40</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="product-info">
-                                    <strong>Amoxicilina 500mg</strong>
-                                    <small>Cápsulas</small>
-                                </div>
-                            </td>
-                            <td>Antibiótico</td>
-                            <td><span class="quantity-badge">1</span></td>
-                            <td>S/12.50</td>
-                            <td class="subtotal">S/12.50</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="product-info">
-                                    <strong>Loratadina 10mg</strong>
-                                    <small>Tabletas</small>
-                                </div>
-                            </td>
-                            <td>Antihistamínico</td>
-                            <td><span class="quantity-badge">2</span></td>
-                            <td>S/18.00</td>
-                            <td class="subtotal">S/36.00</td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="4" class="total-label">Total:</td>
-                            <td class="total-amount">S/77.90</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-
-        <!-- Venta 3 (sin paciente registrado) -->
-        <div class="card">
-            <div class="sale-header">
-                <span class="sale-id">Venta #003</span>
-                <span class="sale-date">13/07/2023 11:20 AM</span>
-            </div>
-            
-            <div class="card-header">
-                <div class="card-icon">👤</div>
-                <h2 class="card-title">Información del Comprador</h2>
-            </div>
-            
-            <div class="no-patient">
-                Cliente no registrado (venta al mostrador)
-            </div>
-            
-            <div class="card-header" style="margin-top: 25px;">
-                <div class="card-icon">💊</div>
-                <h2 class="card-title">Productos Vendidos</h2>
-            </div>
-            
-            <div class="table-container">
-                <table class="products-table">
-                    <thead>
-                        <tr>
-                            <th>Producto</th>
-                            <th>Descripción</th>
-                            <th>Cantidad</th>
-                            <th>Precio Unit.</th>
-                            <th>Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div class="product-info">
-                                    <strong>Aspirina 100mg</strong>
-                                    <small>Tabletas</small>
-                                </div>
-                            </td>
-                            <td>Anticoagulante</td>
-                            <td><span class="quantity-badge">1</span></td>
-                            <td>S/12.00</td>
-                            <td class="subtotal">S/12.00</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div class="product-info">
-                                    <strong>Paracetamol 750mg</strong>
-                                    <small>Tabletas</small>
-                                </div>
-                            </td>
-                            <td>Analgésico</td>
-                            <td><span class="quantity-badge">1</span></td>
-                            <td>S/10.50</td>
-                            <td class="subtotal">S/10.50</td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="4" class="total-label">Total:</td>
-                            <td class="total-amount">S/22.50</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
+        <h3 style="margin-top: 20px;">Productos Vendidos</h3>
+        <table class="products-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Descripción</th>
+              <th>Cantidad</th>
+              <th>Precio Unit.</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Paracetamol 500mg</td>
+              <td>Analgésico</td>
+              <td>2</td>
+              <td>S/8.50</td>
+              <td>S/17.00</td>
+            </tr>
+            <tr>
+              <td>Omeprazol 20mg</td>
+              <td>Antiácido</td>
+              <td>1</td>
+              <td>S/15.00</td>
+              <td>S/15.00</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4" class="total-label">Total:</td>
+              <td class="total-amount">S/32.00</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
     </div>
+
+    <!-- Venta #002 -->
+    <div class="card">
+      <div class="sale-header">
+        <span>Venta #002</span>
+        <span>16/07/2023 02:15 PM</span>
+      </div>
+
+      <div class="patient-grid">
+        <div class="info-item"><strong>DNI:</strong> 87654321</div>
+        <div class="info-item"><strong>Nombre:</strong> Carlos Mendoza</div>
+        <div class="info-item"><strong>Teléfono:</strong> 912345678</div>
+      </div>
+
+      <button class="toggle-button" onclick="toggleDetails(this)">Ver más detalles</button>
+      <div class="hidden-section">
+        <div class="patient-grid" style="margin-top: 10px;">
+          <div class="info-item"><strong>Dirección:</strong> Jr. Cusco 789</div>
+          <div class="info-item"><strong>Correo:</strong> carlos.mendoza@email.com</div>
+        </div>
+
+        <h3 style="margin-top: 20px;">Productos Vendidos</h3>
+        <table class="products-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Descripción</th>
+              <th>Cantidad</th>
+              <th>Precio Unit.</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Ibuprofeno 400mg</td>
+              <td>Antiinflamatorio</td>
+              <td>1</td>
+              <td>S/12.00</td>
+              <td>S/12.00</td>
+            </tr>
+            <tr>
+              <td>Vitamina C 1000mg</td>
+              <td>Suplemento</td>
+              <td>3</td>
+              <td>S/25.00</td>
+              <td>S/75.00</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4" class="total-label">Total:</td>
+              <td class="total-amount">S/87.00</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- Venta #003 - Cliente No Registrado -->
+    <div class="card">
+      <div class="sale-header">
+        <span>Venta #003</span>
+        <span>17/07/2023 09:45 AM</span>
+      </div>
+
+      <div class="no-patient">
+        <strong>Cliente no registrado</strong> - Venta directa sin datos del cliente
+      </div>
+
+      <button class="toggle-button" onclick="toggleDetails(this)">Ver más detalles</button>
+      <div class="hidden-section">
+        <h3 style="margin-top: 20px;">Productos Vendidos</h3>
+        <table class="products-table">
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Descripción</th>
+              <th>Cantidad</th>
+              <th>Precio Unit.</th>
+              <th>Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Aspirina 500mg</td>
+              <td>Analgésico</td>
+              <td>1</td>
+              <td>S/6.00</td>
+              <td>S/6.00</td>
+            </tr>
+            <tr>
+              <td>Paracetamol 500mg</td>
+              <td>Analgésico</td>
+              <td>1</td>
+              <td>S/8.50</td>
+              <td>S/8.50</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4" class="total-label">Total:</td>
+              <td class="total-amount">S/14.50</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function toggleDetails(button) {
+      const section = button.nextElementSibling;
+      const visible = section.style.display === "block";
+      section.style.display = visible ? "none" : "block";
+      button.textContent = visible ? "Ver más detalles" : "Ocultar detalles";
+    }
+  </script>
 </body>
 </html>
+
