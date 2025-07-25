@@ -812,7 +812,6 @@ header h1 {
       }
     }
     
-/* === ESTILOS EXCLUSIVOS PARA HISTORIAL DE VENTAS === */
 /* === Reset básico === */
 * {
   margin: 0;
@@ -823,7 +822,7 @@ header h1 {
 /* === Fondo general y fuente === */
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #e3f2fd; /* azul pálido */
+  background-color: #e3f2fd;
   color: #333;
   padding: 20px;
 }
@@ -832,35 +831,30 @@ body {
 header {
   background-color: #ffffff;
   padding: 20px;
+  text-align: center;
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  position: relative;
 }
 
-header h1 {
-  color: #0d47a1;
-  font-size: 28px;
-}
-
-/* === Botón de volver === */
+/* Botón de volver al dashboard estilizado */
 .back-button {
-  color: #0d47a1;
+  display: inline-block;
+  background-color: #0d47a1;
+  color: white;
   text-decoration: none;
   font-weight: bold;
   font-size: 14px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px 12px;
+  padding: 8px 16px;
   border-radius: 6px;
-  transition: background-color 0.2s ease-in-out;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.3s ease;
+  margin-top: 12px;
 }
 
 .back-button:hover {
-  background-color: #e3f2fd;
+  background-color: #1565c0;
 }
 
 /* === Contenedor principal === */
@@ -870,12 +864,18 @@ header h1 {
   gap: 25px;
 }
 
-/* === Tarjetas de ventas === */
+/* === Tarjetas de ventas con fondo bonito === */
 .card {
-  background-color: #ffffff;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  border-radius: 16px;
+  background: linear-gradient(to bottom right, #e8f0fe, #ffffff);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
 }
 
 /* === Cabecera de venta === */
@@ -896,14 +896,6 @@ header h1 {
 
 .info-item {
   flex: 1 1 200px;
-  min-width: 150px;
-}
-
-/* Nueva disposición horizontal para DNI, nombre y apellido */
-.patient-grid.dni-nombre {
-  flex-direction: row;
-  justify-content: flex-start;
-  gap: 30px;
 }
 
 /* === Cliente no registrado === */
@@ -913,20 +905,24 @@ header h1 {
   margin-bottom: 10px;
 }
 
-/* === Botón de detalles === */
+/* === Botón de detalles con diseño atractivo === */
 .toggle-button {
-  background-color: #1976d2;
-  color: white;
+  background: linear-gradient(to right, #1976d2, #42a5f5);
+  color: #fff;
   border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
+  padding: 10px 18px;
+  border-radius: 8px;
   cursor: pointer;
-  margin-top: 10px;
-  transition: background-color 0.2s ease-in-out;
+  font-weight: bold;
+  font-size: 14px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  transition: background 0.3s ease, transform 0.2s ease;
+  margin-top: 12px;
 }
 
 .toggle-button:hover {
-  background-color: #1565c0;
+  background: linear-gradient(to right, #1565c0, #2196f3);
+  transform: translateY(-1px);
 }
 
 /* === Sección oculta === */
@@ -961,15 +957,4 @@ header h1 {
 .total-amount {
   font-weight: bold;
   color: #0d47a1;
-}
-
-/* === Nueva sección informativa opcional === */
-.nueva-seccion-info {
-  background: #e8f5e9;
-  padding: 20px;
-  border: 2px dashed #81c784;
-  border-radius: 12px;
-  color: #2e7d32;
-  margin-top: 20px;
-  font-size: 16px;
 }
