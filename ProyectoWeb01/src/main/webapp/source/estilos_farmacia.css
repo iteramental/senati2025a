@@ -532,7 +532,7 @@ header h1 {
     }
     /* Estilos específicos para dashboard */
     .dashboard-header {
-      background: rgba(255, 255, 255, 0.95);
+      background: 	rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
       padding: 20px 0;
       box-shadow: 0 2px 15px rgba(21, 101, 192, 0.1);
@@ -811,109 +811,146 @@ header h1 {
         padding: 25px;
       }
     }
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #f0f2f5;
+    
+/* === ESTILOS EXCLUSIVOS PARA HISTORIAL DE VENTAS === */
+/* === Reset básico === */
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-header {
-  background: #007BFF;
-  color: white;
+/* === Fondo general y fuente === */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #e3f2fd; /* azul pálido */
+  color: #333;
   padding: 20px;
-  text-align: center;
-  position: relative;
 }
 
+/* === Encabezado === */
+header {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h1 {
+  color: #0d47a1;
+  font-size: 28px;
+}
+
+/* === Botón de volver === */
 .back-button {
-  display: inline-block;
-  margin-top: 15px;
-  background-color: white;
-  color: #007BFF;
-  border: 2px solid #007BFF;
-  padding: 8px 16px;
-  border-radius: 8px;
+  color: #0d47a1;
   text-decoration: none;
   font-weight: bold;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  font-size: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease-in-out;
 }
 
 .back-button:hover {
-  background-color: #007BFF;
-  color: white;
+  background-color: #e3f2fd;
 }
 
+/* === Contenedor principal === */
 .main-container {
-  max-width: 900px;
-  margin: auto;
-  padding: 30px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
 }
 
+/* === Tarjetas de ventas === */
 .card {
-  background: white;
-  border-radius: 12px;
+  background-color: #ffffff;
   padding: 20px;
-  margin-bottom: 30px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* === Cabecera de venta === */
 .sale-header {
   display: flex;
   justify-content: space-between;
   font-weight: bold;
-  color: #555;
   margin-bottom: 15px;
 }
 
+/* === Info del paciente === */
 .patient-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  margin-bottom: 10px;
 }
 
 .info-item {
-  background: #f7f9fb;
-  padding: 10px;
-  border-radius: 8px;
-  color: #333;
+  flex: 1 1 200px;
+  min-width: 150px;
 }
 
+/* Nueva disposición horizontal para DNI, nombre y apellido */
+.patient-grid.dni-nombre {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 30px;
+}
+
+/* === Cliente no registrado === */
+.no-patient {
+  color: #d32f2f;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* === Botón de detalles === */
 .toggle-button {
-  background-color: #007BFF;
+  background-color: #1976d2;
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
+  padding: 8px 14px;
+  border-radius: 6px;
   cursor: pointer;
-  margin-top: 20px;
-  transition: background-color 0.3s ease;
+  margin-top: 10px;
+  transition: background-color 0.2s ease-in-out;
 }
 
 .toggle-button:hover {
-  background-color: #0056b3;
+  background-color: #1565c0;
 }
 
+/* === Sección oculta === */
 .hidden-section {
   display: none;
   margin-top: 20px;
 }
 
+/* === Tabla de productos === */
 .products-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
 .products-table th,
 .products-table td {
-  border: 1px solid #ddd;
   padding: 10px;
+  border: 1px solid #ccc;
   text-align: left;
 }
 
-.products-table th {
-  background: #f0f0f0;
+.products-table thead {
+  background-color: #e3f2fd;
 }
 
 .total-label {
@@ -923,12 +960,16 @@ header {
 
 .total-amount {
   font-weight: bold;
-  color: green;
+  color: #0d47a1;
 }
 
-.no-patient {
-  font-style: italic;
-  padding: 10px;
-  background: #f9f9f9;
-  border-radius: 6px;
+/* === Nueva sección informativa opcional === */
+.nueva-seccion-info {
+  background: #e8f5e9;
+  padding: 20px;
+  border: 2px dashed #81c784;
+  border-radius: 12px;
+  color: #2e7d32;
+  margin-top: 20px;
+  font-size: 16px;
 }
