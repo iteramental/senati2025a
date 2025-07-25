@@ -5,6 +5,64 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard - Módulo Farmacia</title>
   <link rel="stylesheet" href="source/estilos_farmacia.css">
+  <style>
+    .stat-toggle {
+      margin: 1rem 0;
+      text-align: center;
+    }
+    .toggle-btn {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .stats-grid {
+      display: none;
+      margin-bottom: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .stat-card {
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+    .stat-icon {
+      font-size: 1.5rem;
+    }
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+    .module-card {
+      background-color: #ffffff;
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.3s ease;
+    }
+    .module-card:hover {
+      transform: translateY(-5px);
+    }
+    .module-icon {
+      font-size: 2rem;
+    }
+  </style>
 </head>
 <body>
   <div class="dashboard-header">
@@ -25,8 +83,11 @@
     </div>
   </div>
 
-  <div class="main-container"> 
-    <div class="stats-grid">
+  <div class="main-container">
+    <div class="stat-toggle">
+      <button class="toggle-btn" onclick="toggleStats()">Mostrar/Ocultar Estadísticas</button>
+    </div>
+    <div class="stats-grid" id="statsGrid">
       <div class="stat-card">
         <div class="stat-header">
           <div class="stat-icon">💊</div>
@@ -34,7 +95,6 @@
         </div>
         <div class="stat-label">Productos en Stock</div>
       </div>
-      
       <div class="stat-card">
         <div class="stat-header">
           <div class="stat-icon">📋</div>
@@ -42,7 +102,6 @@
         </div>
         <div class="stat-label">Recetas Hoy</div>
       </div>
-      
       <div class="stat-card">
         <div class="stat-header">
           <div class="stat-icon">💰</div>
@@ -50,7 +109,6 @@
         </div>
         <div class="stat-label">Ventas del Día</div>
       </div>
-      
       <div class="stat-card">
         <div class="stat-header">
           <div class="stat-icon">⚠️</div>
@@ -59,6 +117,7 @@
         <div class="stat-label">Stock Bajo</div>
       </div>
     </div>
+
     <div class="modules-grid">
       <a href="venta_receta.html" class="module-card">
         <span class="module-icon">📋</span>
@@ -67,7 +126,6 @@
           Dispense medicamentos siguiendo prescripciones médicas registradas en el sistema
         </p>
       </a>
-
       <a href="venta_sin_receta.html" class="module-card">
         <span class="module-icon">🛒</span>
         <h3 class="module-title">Venta sin Receta</h3>
@@ -79,15 +137,14 @@
         <span class="module-icon">📊</span>
         <h3 class="module-title">Historial de ventas</h3>
         <p class="module-description">
-           Informes de ventas e información de compradores
+          Informes de ventas e información de compradores
         </p>
       </a>
     </div>
-    
-    <!-- Scripts -->
+  </div>
+
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      // 🔐 Verificar sesión activa
       fetch('farmacia?accion=sesion', { credentials: 'include' })
         .then(response => {
           if (!response.ok) throw new Error('No autenticado');
@@ -99,30 +156,8 @@
         .catch(() => {
           window.location.href = 'inicio_sesion.html';
         });
-
-      // 🔄 Actualizar estadísticas cada 30 segundos (a implementar si quieres backend dinámico)
-      setInterval(actualizarEstadisticas, 30000);
-
-      // 🎬 Animaciones suaves de aparición
-      const cards = document.querySelectorAll('.stat-card, .module-card');
-      cards.forEach((card, index) => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        setTimeout(() => {
-          card.style.transition = 'all 0.5s ease';
-          card.style.opacity = '1';
-          card.style.transform = 'translateY(0)';
-        }, index * 100);
-      });
     });
 
-    // 🔁 Placeholder para estadísticas dinámicas
-    function actualizarEstadisticas() {
-      console.log("Actualizando estadísticas...");
-      // Aquí puedes hacer un fetch al backend para valores reales
-    }
-
-    // 🔓 Cerrar sesión
     function cerrarSesion() {
       fetch('farmacia', {
         method: 'POST',
@@ -136,7 +171,11 @@
         }
       });
     }
-  </script>
 
+    function toggleStats() {
+      const grid = document.getElementById('statsGrid');
+      grid.style.display = (grid.style.display === 'grid') ? 'none' : 'grid';
+    }
+  </script>
 </body>
 </html>
