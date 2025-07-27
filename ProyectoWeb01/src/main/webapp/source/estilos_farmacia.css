@@ -905,22 +905,22 @@ header {
   margin-bottom: 10px;
 }
 
-/* ===== ESTILOS ESPECÍFICOS PARA HISTORIAL DE VENTAS ===== */
+/* ===== ESTILOS PARA HISTORIAL DE VENTAS (ACTUALIZADOS PARA COINCIDIR CON TU HTML) ===== */
 
 /* Contenedor principal */
-.hventas-container {
+#ventas-container {
   max-width: 1200px;
   margin: 2rem auto;
   padding: 0 1rem;
 }
 
 /* Mensajes de carga y error */
-.hventas-loading {
+#loading-message {
   text-align: center;
   padding: 40px;
 }
 
-.hventas-loading-spinner {
+#loading-message div {
   width: 50px;
   height: 50px;
   border: 5px solid rgba(100, 181, 246, 0.3);
@@ -930,7 +930,13 @@ header {
   margin: 0 auto;
 }
 
-.hventas-error {
+#loading-message p {
+  color: #1565c0;
+  font-size: 18px;
+  margin-top: 15px;
+}
+
+#error-message {
   display: none;
   background: rgba(244, 67, 54, 0.1);
   padding: 20px;
@@ -940,8 +946,30 @@ header {
   border: 1px solid rgba(244, 67, 54, 0.3);
 }
 
+#error-text {
+  color: #d32f2f;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+#error-message button {
+  background: #d32f2f;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s;
+  box-shadow: 0 2px 8px rgba(211, 47, 47, 0.3);
+}
+
+#error-message button:hover {
+  background: #b71c1c;
+}
+
 /* Tarjeta de venta */
-.hventas-card {
+.venta-card {
   background: white;
   border-radius: 10px;
   box-shadow: 0 3px 15px rgba(21, 101, 192, 0.1);
@@ -951,41 +979,41 @@ header {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.hventas-card:hover {
+.venta-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 5px 20px rgba(21, 101, 192, 0.2);
 }
 
 /* Cabecera de venta */
-.hventas-header {
+.sale-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
   background-color: #e3f2fd;
   border-bottom: 1px solid #bbdefb;
+  font-weight: bold;
 }
 
-.hventas-header-id {
-  font-weight: bold;
+.sale-header span:first-child {
   color: #1565c0;
   font-size: 1.1rem;
 }
 
-.hventas-header-date {
+.sale-header span:last-child {
   color: #42a5f5;
   font-size: 0.9rem;
 }
 
-/* Grid de información del paciente */
-.hventas-patient-grid {
+/* Info del paciente */
+.patient-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1rem;
   padding: 1rem;
 }
 
-.hventas-info-item {
+.info-item {
   background: #f5fbff;
   padding: 0.8rem 1rem;
   border-radius: 6px;
@@ -993,14 +1021,14 @@ header {
   font-size: 0.95rem;
 }
 
-.hventas-info-label {
+.info-item strong {
   color: #0d47a1;
   font-weight: 600;
   margin-right: 5px;
 }
 
 /* Cliente no registrado */
-.hventas-no-patient {
+.no-patient {
   background: #ffebee;
   color: #d32f2f;
   padding: 1rem;
@@ -1012,7 +1040,7 @@ header {
 }
 
 /* Botón de detalles */
-.hventas-toggle-btn {
+.toggle-button {
   background: #42a5f5;
   color: white;
   border: none;
@@ -1028,22 +1056,22 @@ header {
   transition: all 0.3s ease;
 }
 
-.hventas-toggle-btn:hover {
+.toggle-button:hover {
   background: #1976d2;
   transform: translateY(-2px);
   box-shadow: 0 3px 10px rgba(25, 118, 210, 0.3);
 }
 
-.hventas-toggle-btn svg {
+.toggle-button svg {
   transition: transform 0.3s ease;
 }
 
-.hventas-toggle-btn.active svg {
+.toggle-button.active svg {
   transform: rotate(180deg);
 }
 
 /* Sección de detalles */
-.hventas-details {
+.hidden-section {
   padding: 0 1rem;
   max-height: 0;
   overflow: hidden;
@@ -1051,13 +1079,13 @@ header {
   background: #f8fbfe;
 }
 
-.hventas-details.active {
+.hidden-section.active {
   max-height: 2000px;
   padding: 0 1rem 1.5rem;
 }
 
 /* Tabla de productos */
-.hventas-products-table {
+.products-table {
   width: 100%;
   border-collapse: collapse;
   margin: 1rem 0;
@@ -1065,7 +1093,7 @@ header {
   font-size: 0.95rem;
 }
 
-.hventas-products-table th {
+.products-table th {
   background: #e3f2fd;
   padding: 0.8rem;
   text-align: left;
@@ -1073,56 +1101,65 @@ header {
   font-weight: 600;
 }
 
-.hventas-products-table td {
+.products-table td {
   padding: 0.8rem;
   border-bottom: 1px solid #e1f0fa;
 }
 
-.hventas-products-table tbody tr:hover {
+.products-table tbody tr:hover {
   background: rgba(227, 242, 253, 0.3);
 }
 
-.hventas-table-total {
+.product-info strong {
+  color: #0d47a1;
+}
+
+.product-info small {
+  color: #42a5f5;
+  font-size: 12px;
+}
+
+.products-table tfoot td {
   background: #f5fbff;
   font-weight: bold;
 }
 
-.hventas-total-label {
+.total-label {
   text-align: right;
   padding-right: 1rem;
 }
 
-.hventas-total-amount {
+.total-amount {
   color: #1565c0;
   font-size: 1.1rem;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .hventas-card {
+  .venta-card {
     margin-bottom: 1rem;
   }
   
-  .hventas-patient-grid {
+  .patient-grid {
     grid-template-columns: 1fr;
   }
   
-  .hventas-products-table {
+  .products-table {
     font-size: 0.85rem;
   }
   
-  .hventas-products-table th, 
-  .hventas-products-table td {
+  .products-table th, 
+  .products-table td {
     padding: 0.6rem;
   }
   
-  .hventas-toggle-btn {
+  .toggle-button {
     padding: 0.6rem 1rem;
     font-size: 0.9rem;
   }
 }
 
 /* Animación de carga */
-@keyframes hventas-spin {
+@keyframes spin {
   to { transform: rotate(360deg); }
 }
