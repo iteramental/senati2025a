@@ -119,10 +119,15 @@
       
       card.appendChild(pacienteInfo);
       
-      // Botón de detalles
+   // Botón de detalles
       const toggleBtn = document.createElement('button');
       toggleBtn.className = 'toggle-button';
-      toggleBtn.textContent = 'Ver más detalles';
+      toggleBtn.innerHTML = `
+        <span>Ver más detalles</span>
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+          <path d="M1 1.5L6 6.5L11 1.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      `;
       toggleBtn.onclick = function() { toggleDetails(this); };
       card.appendChild(toggleBtn);
       
@@ -190,11 +195,17 @@
     }
 
     function toggleDetails(button) {
-      const section = button.nextElementSibling;
-      const visible = section.style.display === "block";
-      section.style.display = visible ? "none" : "block";
-      button.textContent = visible ? "Ver más detalles" : "Ocultar detalles";
-    }
+    	  const section = button.nextElementSibling;
+    	  const isVisible = section.classList.contains('active');
+    	  
+    	  if (isVisible) {
+    	    section.classList.remove('active');
+    	    button.innerHTML = '<span>Ver más detalles</span><svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1.5L6 6.5L11 1.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>';
+    	  } else {
+    	    section.classList.add('active');
+    	    button.innerHTML = '<span>Ocultar detalles</span><svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 6.5L6 1.5L11 6.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>';
+    	  }
+    	}
 
     // Iniciar carga cuando el script se ejecute
     cargarHistorialVentas();
