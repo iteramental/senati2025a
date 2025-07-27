@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🏥 Historial de Ventas - Farmacia</title>
   <link rel="stylesheet" href="source/estilos_farmacia.css">
 </head>
@@ -12,184 +12,198 @@
     <a href="dashboard_farmacia.html" class="back-button">⬅️ Volver al Dashboard</a>
   </header>
 
-  <div class="main-container">
-
-    <!-- Venta #001 -->
-    <div class="card">
-      <div class="sale-header">
-        <span>Venta #001</span>
-        <span>15/07/2023 10:30 AM</span>
-      </div>
-
-      <div class="patient-grid">
-        <div class="info-item"><strong>DNI:</strong> 12345678</div>
-        <div class="info-item"><strong>Nombre:</strong> María García</div>
-        <div class="info-item"><strong>Teléfono:</strong> 987654321</div>
-      </div>
-
-      <button class="toggle-button" onclick="toggleDetails(this)">Ver más detalles</button>
-      <div class="hidden-section">
-
-        <h3>Productos Vendidos</h3>
-        <table class="products-table">
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Descripción</th>
-              <th>Cantidad</th>
-              <th>Precio Unit.</th>
-              <th>Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Paracetamol 500mg</td>
-              <td>Analgésico</td>
-              <td>2</td>
-              <td>S/8.50</td>
-              <td>S/17.00</td>
-            </tr>
-            <tr>
-              <td>Omeprazol 20mg</td>
-              <td>Antiácido</td>
-              <td>1</td>
-              <td>S/15.00</td>
-              <td>S/15.00</td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colspan="4" class="total-label">Total:</td>
-              <td class="total-amount">S/32.00</td>
-            </tr>
-          </tfoot>
-        </table>
-
-        <div class="patient-grid">
-          <div class="info-item"><strong>Dirección:</strong> Av. Lima 456</div>
-          <div class="info-item"><strong>Correo:</strong> maria.garcia@email.com</div>
-        </div>
-      </div>
+  <div id="ventas-container">
+    <div id="loading-message" style="text-align: center; padding: 40px;">
+      <div style="width: 50px; height: 50px; border: 5px solid rgba(100, 181, 246, 0.3); border-radius: 50%; border-top-color: #42a5f5; animation: spin 1s ease-in-out infinite; margin: 0 auto;"></div>
+      <p style="color: #1565c0; font-size: 18px; margin-top: 15px;">Cargando historial de ventas...</p>
     </div>
-
-    <!-- Venta #002 -->
-    <div class="card">
-      <div class="sale-header">
-        <span>Venta #002</span>
-        <span>16/07/2023 02:15 PM</span>
-      </div>
-
-      <div class="patient-grid">
-        <div class="info-item"><strong>DNI:</strong> 87654321</div>
-        <div class="info-item"><strong>Nombre:</strong> Carlos Mendoza</div>
-        <div class="info-item"><strong>Teléfono:</strong> 912345678</div>
-      </div>
-
-      <button class="toggle-button" onclick="toggleDetails(this)">Ver más detalles</button>
-      <div class="hidden-section">
-
-        <h3>Productos Vendidos</h3>
-        <table class="products-table">
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Descripción</th>
-              <th>Cantidad</th>
-              <th>Precio Unit.</th>
-              <th>Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Ibuprofeno 400mg</td>
-              <td>Antiinflamatorio</td>
-              <td>1</td>
-              <td>S/12.00</td>
-              <td>S/12.00</td>
-            </tr>
-            <tr>
-              <td>Vitamina C 1000mg</td>
-              <td>Suplemento</td>
-              <td>3</td>
-              <td>S/25.00</td>
-              <td>S/75.00</td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colspan="4" class="total-label">Total:</td>
-              <td class="total-amount">S/87.00</td>
-            </tr>
-          </tfoot>
-        </table>
-
-        <div class="patient-grid">
-          <div class="info-item"><strong>Dirección:</strong> Jr. Cusco 789</div>
-          <div class="info-item"><strong>Correo:</strong> carlos.mendoza@email.com</div>
-        </div>
-      </div>
+    
+    <div id="error-message" style="display: none; background: rgba(244, 67, 54, 0.1); padding: 20px; border-radius: 12px; text-align: center; margin: 20px 0; border: 1px solid rgba(244, 67, 54, 0.3);">
+      <p id="error-text" style="color: #d32f2f; margin-bottom: 15px; font-weight: 500;">⚠️ No se pudo cargar el historial de ventas. Intente nuevamente.</p>
+      <button onclick="cargarHistorialVentas()" style="background: #d32f2f; color: white; border: none; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: background 0.3s; box-shadow: 0 2px 8px rgba(211, 47, 47, 0.3);">Reintentar</button>
+      <div id="error-details" style="margin-top: 10px; font-size: 12px; color: #666;"></div>
     </div>
-
-    <!-- Venta #003 -->
-    <div class="card">
-      <div class="sale-header">
-        <span>Venta #003</span>
-        <span>17/07/2023 09:45 AM</span>
-      </div>
-
-      <div class="no-patient">
-        <strong>Cliente no registrado</strong> - Venta directa sin datos del cliente
-      </div>
-
-      <button class="toggle-button" onclick="toggleDetails(this)">Ver más detalles</button>
-      <div class="hidden-section">
-
-        <h3>Productos Vendidos</h3>
-        <table class="products-table">
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Descripción</th>
-              <th>Cantidad</th>
-              <th>Precio Unit.</th>
-              <th>Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Aspirina 500mg</td>
-              <td>Analgésico</td>
-              <td>1</td>
-              <td>S/6.00</td>
-              <td>S/6.00</td>
-            </tr>
-            <tr>
-              <td>Paracetamol 500mg</td>
-              <td>Analgésico</td>
-              <td>1</td>
-              <td>S/8.50</td>
-              <td>S/8.50</td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colspan="4" class="total-label">Total:</td>
-              <td class="total-amount">S/14.50</td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-    </div>
-
   </div>
 
   <script>
+    // Configuración de la URL base considerando el contexto de la aplicación
+    const APP_CONTEXT = '/ProyectoWeb01';
+    const API_BASE_URL = window.location.origin + APP_CONTEXT;
+    
+    async function cargarHistorialVentas() {
+      const container = document.getElementById('ventas-container');
+      const loading = document.getElementById('loading-message');
+      const errorMsg = document.getElementById('error-message');
+      const errorText = document.getElementById('error-text');
+      const errorDetails = document.getElementById('error-details');
+      
+      loading.style.display = 'block';
+      errorMsg.style.display = 'none';
+      errorDetails.textContent = '';
+      
+      try {
+        // Limpiar contenedor
+        container.querySelectorAll('.venta-card, .empty-message').forEach(el => el.remove());
+        
+        const url = `${API_BASE_URL}/farmacia?accion=listarhistorial`;
+        console.log("URL de la solicitud:", url);
+        
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+          throw new Error(`Error HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const ventas = await response.json();
+        console.log("Datos recibidos:", ventas);
+        
+        loading.style.display = 'none';
+        
+        if (!ventas || ventas.length === 0) {
+          const emptyMsg = document.createElement('div');
+          emptyMsg.style.textAlign = 'center';
+          emptyMsg.style.padding = '40px';
+          emptyMsg.style.color = '#42a5f5';
+          emptyMsg.style.fontStyle = 'italic';
+          emptyMsg.innerHTML = '<p>No hay ventas registradas</p>';
+          container.appendChild(emptyMsg);
+          return;
+        }
+        
+        ventas.forEach(venta => {
+          const card = crearCardVenta(venta);
+          container.appendChild(card);
+        });
+        
+      } catch (error) {
+        console.error("Error al cargar historial:", error);
+        loading.style.display = 'none';
+        errorText.textContent = '⚠️ Error al cargar el historial de ventas';
+        errorDetails.textContent = error.message;
+        errorMsg.style.display = 'block';
+      }
+    }
+
+    function crearCardVenta(venta) {
+      const card = document.createElement('div');
+      card.className = 'venta-card';
+      
+      // Cabecera
+      const header = document.createElement('div');
+      header.className = 'sale-header';
+      header.innerHTML = `
+        <span>Venta #${venta.idFactura.toString().padStart(3, '0')}</span>
+        <span>${venta.fechaEmision || 'Fecha no disponible'}</span>
+      `;
+      card.appendChild(header);
+      
+      // Info del paciente/cliente
+      const pacienteInfo = document.createElement('div');
+      pacienteInfo.className = 'patient-grid';
+      
+      if (venta.dniPaciente) {
+        pacienteInfo.innerHTML = `
+          <div class="info-item">
+            <strong>DNI:</strong> ${venta.dniPaciente || '--'}
+          </div>
+          <div class="info-item">
+            <strong>Nombre:</strong> ${venta.nombrePaciente || '--'}
+          </div>
+          <div class="info-item">
+            <strong>Teléfono:</strong> ${venta.telefonoPaciente || '--'}
+          </div>
+        `;
+      } else {
+        pacienteInfo.innerHTML = '<div class="no-patient"><strong>Cliente no registrado</strong> - Venta directa sin datos del cliente</div>';
+      }
+      
+      card.appendChild(pacienteInfo);
+      
+      // Botón de detalles
+      const toggleBtn = document.createElement('button');
+      toggleBtn.className = 'toggle-button';
+      toggleBtn.textContent = 'Ver más detalles';
+      toggleBtn.onclick = function() { toggleDetails(this); };
+      card.appendChild(toggleBtn);
+      
+      // Sección de detalles
+      const hiddenSection = document.createElement('div');
+      hiddenSection.className = 'hidden-section';
+      
+      // Tabla de productos
+      if (venta.productos && venta.productos.length > 0) {
+        const tableHtml = `
+          <h3 style="margin: 1rem 0; color: #1565c0;">Productos Vendidos</h3>
+          <table class="products-table">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+                <th>Precio Unit.</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${venta.productos.map(p => `
+                <tr>
+                  <td>${p.producto || '--'}</td>
+                  <td>${p.descripcion || '--'}</td>
+                  <td>${p.cantidad || '--'}</td>
+                  <td>S/${p.precioUnitario || '0.00'}</td>
+                  <td>S/${p.subtotal || '0.00'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="4" class="total-label">Total:</td>
+                <td class="total-amount">S/${venta.total || '0.00'}</td>
+              </tr>
+            </tfoot>
+          </table>
+        `;
+        hiddenSection.innerHTML = tableHtml;
+      } else {
+        hiddenSection.innerHTML = '<p style="text-align: center; color: #42a5f5; font-style: italic;">No hay productos registrados en esta venta</p>';
+      }
+      
+      // Info adicional del paciente si existe
+      if (venta.dniPaciente) {
+        hiddenSection.innerHTML += `
+          <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #bbdefb;">
+            <div class="info-item">
+              <strong>Forma de Pago:</strong> ${venta.formaPago || '--'}
+            </div>
+            <div class="info-item">
+              <strong>Estado:</strong> ${venta.estadoPago || '--'}
+            </div>
+            <div class="info-item">
+              <strong>Tipo de Venta:</strong> ${venta.tipoVenta || '--'}
+            </div>
+          </div>
+        `;
+      }
+      
+      card.appendChild(hiddenSection);
+      return card;
+    }
+
     function toggleDetails(button) {
       const section = button.nextElementSibling;
       const visible = section.style.display === "block";
       section.style.display = visible ? "none" : "block";
       button.textContent = visible ? "Ver más detalles" : "Ocultar detalles";
     }
+
+    // Iniciar carga cuando el script se ejecute
+    cargarHistorialVentas();
   </script>
+  
+  <style>
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
 </body>
 </html>

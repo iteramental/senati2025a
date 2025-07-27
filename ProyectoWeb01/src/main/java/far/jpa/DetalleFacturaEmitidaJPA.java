@@ -13,8 +13,8 @@ public class DetalleFacturaEmitidaJPA {
     @Column(name = "id_detalle")
     private int idDetalle;
 
-    @ManyToOne
-    @JoinColumn(name = "id_factura", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_factura")
     private FacturaEmitidaJPA factura;
 
     @Column(name = "tipo_item", nullable = false)
@@ -43,6 +43,7 @@ public class DetalleFacturaEmitidaJPA {
     @Column(name = "updated_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
+    
 
     // Getters y Setters
 
@@ -125,4 +126,5 @@ public class DetalleFacturaEmitidaJPA {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
+    
 }

@@ -2,7 +2,9 @@ package far.jpa;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "factura_emitida")
@@ -49,6 +51,10 @@ public class FacturaEmitidaJPA {
 
     @Column(name = "tipo_venta", nullable = false)
     private String tipoVenta; // Receta o Externo
+    
+ // Añade esta relación
+    @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DetalleFacturaEmitidaJPA> detalles = new ArrayList<>();
 
     // Getters y Setters
 
@@ -60,8 +66,28 @@ public class FacturaEmitidaJPA {
         this.idFactura = idFactura;
     }
 
+    public List<DetalleFacturaEmitidaJPA> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<DetalleFacturaEmitidaJPA> detalles) {
+        this.detalles = detalles;
+    }
+
+
     public Date getFechaEmision() {
         return fechaEmision;
+    }
+    // Método helper para agregar detalles
+    public void addDetalle(DetalleFacturaEmitidaJPA detalle) {
+        detalles.add(detalle);
+        detalle.setFactura(this);
+    }
+
+    // Método helper para remover detalles
+    public void removeDetalle(DetalleFacturaEmitidaJPA detalle) {
+        detalles.remove(detalle);
+        detalle.setFactura(null);
     }
 
     public void setFechaEmision(Date fechaEmision) {

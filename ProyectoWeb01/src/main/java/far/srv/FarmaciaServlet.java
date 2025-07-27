@@ -122,31 +122,56 @@ public class FarmaciaServlet extends HttpServlet {
             buscarPaciente(request, response);
         } 
         else if ("listarhistorial".equalsIgnoreCase(accion)) {
-            // 🚨 Aquí se lista el historial de ventas
             EntityManager em = emf.createEntityManager();
             try {
-                List<FacturaEmitidaJPA> facturas = em.createQuery("SELECT f FROM FacturaEmitidaJPA f ORDER BY f.fechaEmision DESC", FacturaEmitidaJPA.class)
-                                                     .getResultList();
+                // Consulta optimizada con JOIN para evitar N+1
+                List<FacturaEmitidaJPA> facturas = em.createQuery(
+                    "SELECT f FROM FacturaEmitidaJPA f " +
+                    "LEFT JOIN FETCH f.detalles " +
+                    "LEFT JOIN FETCH f.paciente " +
+                    "ORDER BY f.fechaEmision DESC", FacturaEmitidaJPA.class)
+                   .getResultList();
 
                 JsonArray jsonArray = new JsonArray();
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
                 for (FacturaEmitidaJPA f : facturas) {
-                    JsonObject obj = new JsonObject();
-                    obj.addProperty("idFactura", f.getIdFactura());
-                    obj.addProperty("fechaEmision", sdf.format(f.getFechaEmision()));
-                    obj.addProperty("paciente", f.getPaciente() != null ? f.getPaciente().getNombre() + " " + f.getPaciente().getApellido() : "Sin paciente");
-                    obj.addProperty("total", f.getTotal().toPlainString());
-                    obj.addProperty("formaPago", f.getFormaPago());
-                    obj.addProperty("estadoPago", f.getEstadoPago());
-                    obj.addProperty("tipoVenta", f.getTipoVenta());
-                    jsonArray.add(obj);
+                    JsonObject facturaJson = new JsonObject();
+                    facturaJson.addProperty("idFactura", f.getIdFactura());
+                    facturaJson.addProperty("fechaEmision", sdf.format(f.getFechaEmision()));
+                    
+                    // Datos del paciente si existe
+                    if (f.getPaciente() != null) {
+                        facturaJson.addProperty("dniPaciente", f.getPaciente().getDni());
+                        facturaJson.addProperty("nombrePaciente", f.getPaciente().getNombre() + " " + f.getPaciente().getApellido());
+                        facturaJson.addProperty("telefonoPaciente", f.getPaciente().getTelefono());
+                    }
+                    
+                    facturaJson.addProperty("total", f.getTotal().toPlainString());
+                    facturaJson.addProperty("formaPago", f.getFormaPago());
+                    facturaJson.addProperty("estadoPago", f.getEstadoPago());
+                    facturaJson.addProperty("tipoVenta", f.getTipoVenta());
+                    
+                    // Detalles de los productos
+                    JsonArray detallesArray = new JsonArray();
+                    for (DetalleFacturaEmitidaJPA d : f.getDetalles()) {
+                        JsonObject detalleJson = new JsonObject();
+                        detalleJson.addProperty("producto", d.getProducto().getNombreComercial());
+                        detalleJson.addProperty("descripcion", d.getProducto().getNombreBase());
+                        detalleJson.addProperty("cantidad", d.getCantidad());
+                        detalleJson.addProperty("precioUnitario", d.getPrecioUnitario().toPlainString());
+                        detalleJson.addProperty("subtotal", d.getSubtotal().toPlainString());
+                        detallesArray.add(detalleJson);
+                    }
+                    facturaJson.add("productos", detallesArray);
+                    
+                    jsonArray.add(facturaJson);
                 }
 
                 response.getWriter().write(jsonArray.toString());
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                response.getWriter().write("{\"error\": \"Error al obtener historial\"}");
+                response.getWriter().write("{\"error\": \"Error al obtener historial: " + e.getMessage() + "\"}");
                 e.printStackTrace();
             } finally {
                 em.close();
