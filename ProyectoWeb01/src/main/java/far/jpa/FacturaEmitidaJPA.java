@@ -1,6 +1,17 @@
 package far.jpa;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,6 +20,10 @@ import java.util.List;
 @Entity
 @Table(name = "factura_emitida")
 public class FacturaEmitidaJPA {
+    // Constructor por defecto que inicializa contabilizada
+    public FacturaEmitidaJPA() {
+        this.contabilizada = "N";
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +51,7 @@ public class FacturaEmitidaJPA {
     private String estadoPago; // Pendiente, Pagado, Anulada
 
     @Column(name = "contabilizada", nullable = false, length = 1)
-    private String contabilizada; // S o N
+    private String contabilizada = "N"; // S o N, valor por defecto
 
     @Column(name = "glosa")
     private String glosa;

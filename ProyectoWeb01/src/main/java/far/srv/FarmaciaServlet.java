@@ -185,51 +185,78 @@ public class FarmaciaServlet extends HttpServlet {
 
     private void registrarVenta(HttpServletRequest request, HttpServletResponse response) throws IOException {
         EntityManager em = emf.createEntityManager();
+        EntityTransaction transaction = em.getTransaction();
+        response.setContentType("application/json");
         try {
-            // Obtener datos de la venta desde el request
             int idReceta = Integer.parseInt(request.getParameter("idReceta"));
-            // Aquí deberías obtener los detalles de la receta y crear la factura
             RecetaDAO recetaDAO = new RecetaDAO(em);
             RecetaCabeceraJPA receta = recetaDAO.buscarRecetaPorId(idReceta);
-            
             if (receta == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Receta no encontrada.");
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.getWriter().write("{\"error\": \"Receta no encontrada.\"}");
                 return;
             }
-
             List<RecetaDetalleJPA> detalles = recetaDAO.obtenerDetallesReceta(idReceta);
-            
-            // Crear la factura
+            transaction.begin();
             FacturaEmitidaJPA factura = new FacturaEmitidaJPA();
             factura.setFechaEmision(new Date());
+            factura.setIdDepartamento(1); // Siempre 1 (departamento farmacia, ver README)
             factura.setPaciente(receta.getPaciente());
-            factura.setTotal(calcularTotal(detalles)); // Implementa este método para calcular el total
+            factura.setTotal(calcularTotal(detalles));
             factura.setFormaPago(request.getParameter("formaPago"));
-            factura.setEstadoPago("Pendiente");
+            factura.setEstadoPago("Pagado");
+            factura.setContabilizada("N");
+            factura.setGlosa(null);
             factura.setTipoVenta("Receta");
-
-            // Registrar la venta
-            VentaDAO ventaDAO = new VentaDAO(em);
-            ventaDAO.registrarVenta(factura, detalles);
-
+            factura.setCreatedAt(new Date());
+            factura.setUpdatedAt(new Date());
+            em.persist(factura);
+            for (RecetaDetalleJPA recetaDetalle : detalles) {
+                ProductoJPA producto = em.find(ProductoJPA.class, recetaDetalle.getProducto().getIdProducto());
+                int cantidad = recetaDetalle.getCantidad();
+                if (producto.getStock() < cantidad) {
+                    throw new RuntimeException("Stock insuficiente para: " + (producto.getNombreComercial() != null ? producto.getNombreComercial() : producto.getNombreBase()));
+                }
+                DetalleFacturaEmitidaJPA detalle = new DetalleFacturaEmitidaJPA();
+                detalle.setFactura(factura);
+                detalle.setTipoItem("Producto");
+                detalle.setProducto(producto);
+                detalle.setDescripcion(producto.getNombreComercial() != null ? producto.getNombreComercial() : producto.getNombreBase());
+                detalle.setCantidad(cantidad);
+                detalle.setPrecioUnitario(producto.getPrecio());
+                detalle.setSubtotal(producto.getPrecio().multiply(new BigDecimal(cantidad)));
+                detalle.setCreatedAt(new Date());
+                detalle.setUpdatedAt(new Date());
+                em.persist(detalle);
+                // Reducir stock
+                producto.setStock(producto.getStock() - cantidad);
+                em.merge(producto);
+            }
+            transaction.commit();
             response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().write("Venta registrada con éxito.");
+            response.setContentType("application/json");
+            response.getWriter().write("{\"success\": true, \"idFactura\": " + factura.getIdFactura() + "}");
         } catch (Exception e) {
+            if (transaction.isActive()) {
+                transaction.rollback();
+            }
             e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error al registrar la venta.");
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Error al registrar la venta: " + e.getMessage().replace("\"", "'") + "\"}");
         } finally {
             em.close();
         }
     }
 
     private BigDecimal calcularTotal(List<RecetaDetalleJPA> detalles) {
-    	    BigDecimal total = BigDecimal.ZERO;
-    	    for (RecetaDetalleJPA detalle : detalles) {
-    	        BigDecimal subtotal = detalle.getProducto().getPrecio().multiply(new BigDecimal(detalle.getCantidad()));
-    	        total = total.add(subtotal);
-    	    }
-    	    return total;  
-	}
+            BigDecimal total = BigDecimal.ZERO;
+            for (RecetaDetalleJPA detalle : detalles) {
+                BigDecimal subtotal = detalle.getProducto().getPrecio().multiply(new BigDecimal(detalle.getCantidad()));
+                total = total.add(subtotal);
+            }
+            return total;  
+    }
     
     private void buscarReceta(HttpServletRequest request, HttpServletResponse response) throws IOException {
         EntityManager em = emf.createEntityManager();
@@ -237,15 +264,60 @@ public class FarmaciaServlet extends HttpServlet {
             int idReceta = Integer.parseInt(request.getParameter("idReceta"));
             RecetaDAO recetaDAO = new RecetaDAO(em);
             RecetaCabeceraJPA receta = recetaDAO.buscarRecetaPorId(idReceta);
-            
+            List<far.jpa.RecetaDetalleJPA> detalles = recetaDAO.obtenerDetallesReceta(idReceta);
+
             if (receta == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Receta no encontrada.");
                 return;
             }
-            // Convertir la receta a JSON y enviarla como respuesta
-            String json = new Gson().toJson(receta); // Asegúrate de tener Gson en tus dependencias
+
+            // Construir JSON manualmente para incluir detalles e indicación
+            com.google.gson.JsonObject recetaJson = new com.google.gson.JsonObject();
+            recetaJson.addProperty("idReceta", receta.getIdReceta());
+            recetaJson.addProperty("fechaEmision", receta.getFechaEmision() != null ? receta.getFechaEmision().toString() : "");
+
+            // Médico
+            if (receta.getMedico() != null) {
+                com.google.gson.JsonObject medicoJson = new com.google.gson.JsonObject();
+                medicoJson.addProperty("nombre", receta.getMedico().getNombre());
+                medicoJson.addProperty("apellido", receta.getMedico().getApellido());
+                recetaJson.add("medico", medicoJson);
+            }
+
+            // Paciente
+            if (receta.getPaciente() != null) {
+                com.google.gson.JsonObject pacienteJson = new com.google.gson.JsonObject();
+                pacienteJson.addProperty("nombre", receta.getPaciente().getNombre());
+                pacienteJson.addProperty("apellido", receta.getPaciente().getApellido());
+                pacienteJson.addProperty("dni", receta.getPaciente().getDni());
+                pacienteJson.addProperty("fechaNacimiento", receta.getPaciente().getFechaNacimiento() != null ? receta.getPaciente().getFechaNacimiento().toString() : "");
+                pacienteJson.addProperty("telefono", receta.getPaciente().getTelefono());
+                pacienteJson.addProperty("correo", receta.getPaciente().getCorreo());
+                pacienteJson.addProperty("direccion", receta.getPaciente().getDireccion());
+                recetaJson.add("paciente", pacienteJson);
+            }
+
+            // Detalles
+            com.google.gson.JsonArray detallesArray = new com.google.gson.JsonArray();
+            for (far.jpa.RecetaDetalleJPA det : detalles) {
+                com.google.gson.JsonObject detJson = new com.google.gson.JsonObject();
+                // Producto
+                if (det.getProducto() != null) {
+                    com.google.gson.JsonObject prodJson = new com.google.gson.JsonObject();
+                    prodJson.addProperty("nombreComercial", det.getProducto().getNombreComercial());
+                    prodJson.addProperty("nombreBase", det.getProducto().getNombreBase());
+                    prodJson.addProperty("concentracion", det.getProducto().getConcentracion());
+                    prodJson.addProperty("precio", det.getProducto().getPrecio() != null ? det.getProducto().getPrecio().doubleValue() : 0);
+                    detJson.add("producto", prodJson);
+                }
+                detJson.addProperty("cantidad", det.getCantidad());
+                detJson.addProperty("indicacion", det.getIndicacion() != null ? det.getIndicacion() : "");
+                detallesArray.add(detJson);
+            }
+            recetaJson.add("detalles", detallesArray);
+
             response.setContentType("application/json");
-            response.getWriter().write(json);
+            response.getWriter().write(recetaJson.toString());
         } catch (NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID de receta inválido.");
         } catch (Exception e) {
@@ -291,11 +363,11 @@ public class FarmaciaServlet extends HttpServlet {
             String fechaNacimiento = paciente.getFechaNacimiento() != null ? 
                 sdf.format(paciente.getFechaNacimiento()) : "";
 
-            // Crear respuesta JSON
+            // Crear respuesta JSON con clave 'fechaNac' para compatibilidad frontend
             String json = String.format(
                 "{\"dni\":\"%s\", \"nombre\":\"%s\", \"apellido\":\"%s\", " +
                 "\"telefono\":\"%s\", \"direccion\":\"%s\", \"correo\":\"%s\", " +
-                "\"fecha_nacimiento\":\"%s\"}",
+                "\"fechaNac\":\"%s\"}",
                 paciente.getDni(),
                 paciente.getNombre(),
                 paciente.getApellido(),
@@ -304,7 +376,6 @@ public class FarmaciaServlet extends HttpServlet {
                 paciente.getCorreo() != null ? paciente.getCorreo() : "",
                 fechaNacimiento
             );
-            
             response.getWriter().write(json);
             
         } catch (Exception e) {
@@ -328,12 +399,12 @@ public class FarmaciaServlet extends HttpServlet {
 
             // CONSULTA CORREGIDA (versión simplificada y funcional)
             String jpql = "SELECT p FROM ProductoJPA p \r\n"
-            		+ "WHERE (\r\n"
-            		+ "  LOWER(p.nombreBase) LIKE LOWER(CONCAT('%', :nombre, '%')) \r\n"
-            		+ "  OR LOWER(p.nombreComercial) LIKE LOWER(CONCAT('%', :nombre, '%'))\r\n"
-            		+ ") \r\n"
-            		+ "ORDER BY p.nombreComercial, p.nombreBase\r\n"
-            		+ "";
+                    + "WHERE (\r\n"
+                    + "  LOWER(p.nombreBase) LIKE LOWER(CONCAT('%', :nombre, '%')) \r\n"
+                    + "  OR LOWER(p.nombreComercial) LIKE LOWER(CONCAT('%', :nombre, '%'))\r\n"
+                    + ") \r\n"
+                    + "ORDER BY p.nombreComercial, p.nombreBase\r\n"
+                    + "";
 
             System.out.println("JPQL: " + jpql); // Para debug
             
@@ -397,7 +468,7 @@ public class FarmaciaServlet extends HttpServlet {
             factura.setTipoVenta("Externo");
             factura.setCreatedAt(new Date());
             factura.setUpdatedAt(new Date());
-            factura.setIdDepartamento(1); // Ajustar según tu lógica
+            factura.setIdDepartamento(1); // Siempre 1 (departamento farmacia, ver README)
 
             em.persist(factura);
 
@@ -437,6 +508,7 @@ public class FarmaciaServlet extends HttpServlet {
             transaction.commit();
 
             // Respuesta exitosa
+            response.setStatus(HttpServletResponse.SC_OK);
             response.setContentType("application/json");
             response.getWriter().write("{\"success\": true, \"idFactura\": " + factura.getIdFactura() + "}");
 
@@ -445,14 +517,15 @@ public class FarmaciaServlet extends HttpServlet {
                 transaction.rollback();
             }
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Error al registrar la venta: " + e.getMessage().replace("\"", "'") + "\"}");
             e.printStackTrace();
         } finally {
             em.close();
         }
     }
 
-	@Override
+    @Override
     public void destroy() {
         if (emf != null && emf.isOpen()) {
             emf.close();

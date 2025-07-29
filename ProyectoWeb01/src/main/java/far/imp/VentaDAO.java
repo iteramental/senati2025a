@@ -24,6 +24,10 @@ public class VentaDAO {
         EntityTransaction transaction = em.getTransaction();
         try {
             transaction.begin();
+            // Asegura que contabilizada nunca sea nulo
+            if (factura.getContabilizada() == null || factura.getContabilizada().trim().isEmpty()) {
+                factura.setContabilizada("N");
+            }
             em.persist(factura);
             for (RecetaDetalleJPA recetaDetalle : detalles) {
                 DetalleFacturaEmitidaJPA detalle = new DetalleFacturaEmitidaJPA();
@@ -46,6 +50,9 @@ public class VentaDAO {
         EntityTransaction transaction = em.getTransaction();
         try {
             transaction.begin();
+            if (factura.getContabilizada() == null || factura.getContabilizada().trim().isEmpty()) {
+                factura.setContabilizada("N");
+            }
             em.persist(factura);
             em.persist(detalle);
             transaction.commit();

@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Venta sin Receta - Módulo Farmacia</title>
-  <link rel="stylesheet" href="source/estilos_farmacia.css">
-    </head>
+    <link rel="stylesheet" href="source/estilos_farmacia.css" />
+  </head>
   <body>
     <header>
       <h1>🏥 Venta de Medicamentos</h1>
@@ -468,100 +468,111 @@
       cargarPacientes();
 
       function buscarPaciente() {
-    	    const dni = document.getElementById("pacienteDni").value.trim();
-    	    const mensaje = document.getElementById("searchMessage");
-    	    const btnNuevoPaciente = document.getElementById("nuevoPacienteBtnContainer");
-    	    
-    	    // Validaciones
-    	    if (!dni) {
-    	        mostrarError("⚠️ Por favor, ingresa un DNI.");
-    	        btnNuevoPaciente.style.display = "none";
-    	        return;
-    	    }
-    	    
-    	    if (!/^\d{8}$/.test(dni)) {
-    	        mostrarError("⚠️ El DNI debe tener 8 dígitos numéricos.");
-    	        btnNuevoPaciente.style.display = "none";
-    	        return;
-    	    }
+        const dni = document.getElementById("pacienteDni").value.trim();
+        const mensaje = document.getElementById("searchMessage");
+        const btnNuevoPaciente = document.getElementById(
+          "nuevoPacienteBtnContainer"
+        );
 
-    	    // Mostrar estado de carga
-    	    mensaje.textContent = "🔍 Buscando paciente...";
-    	    mensaje.style.color = "#2196F3";
+        // Validaciones
+        if (!dni) {
+          mostrarError("⚠️ Por favor, ingresa un DNI.");
+          btnNuevoPaciente.style.display = "none";
+          return;
+        }
 
-    	    // Configurar la petición con URL ABSOLUTA
-    	    const url = `http://localhost:8080/ProyectoWeb01/farmacia?accion=buscarPaciente&dni=${encodeURIComponent(dni)}`;
-    	    
-    	    // Opciones de la petición con CORS
-    	    const options = {
-    	        method: 'GET',
-    	        mode: 'cors', // Importante para peticiones entre contextos
-    	        headers: {
-    	            'Accept': 'application/json'
-    	        }
-    	    };
+        if (!/^\d{8}$/.test(dni)) {
+          mostrarError("⚠️ El DNI debe tener 8 dígitos numéricos.");
+          btnNuevoPaciente.style.display = "none";
+          return;
+        }
 
-    	    // Realizar la petición
-    	    fetch(url, options)
-    	        .then(response => {
-    	            if (!response.ok) {
-    	                throw new Error(`Error HTTP: ${response.status}`);
-    	            }
-    	            return response.json();
-    	        })
-    	        .then(data => {
-    	            if (data.error) {
-    	                throw new Error(data.error);
-    	            }
-    	            
-    	            // Autocompletar campos
-    	            document.getElementById("dniInput").value = data.dni || '';
-    	            document.getElementById("nombreInput").value = data.nombre || '';
-    	            document.getElementById("apellidoInput").value = data.apellido || '';
-    	            document.getElementById("telefonoInput").value = data.telefono || '';
-    	            document.getElementById("direccionInput").value = data.direccion || '';
-    	            document.getElementById("correoInput").value = data.correo || '';
-    	            document.getElementById("fechaNacInput").value = data.fecha_nacimiento || '';
-    	            
-    	            // Deshabilitar campos clave
-    	            document.getElementById("dniInput").disabled = true;
-    	            document.getElementById("nombreInput").disabled = true;
-    	            document.getElementById("apellidoInput").disabled = true;
-    	            
-    	            // Mostrar éxito
-    	            mensaje.textContent = "✅ Paciente encontrado";
-    	            mensaje.style.color = "#2e7d32";
-    	            btnNuevoPaciente.style.display = "none";
-    	            document.body.style.background = "";
-    	            
-    	            // Habilitar botón de registrar venta si hay productos
-    	            verificarBotonRegistrar();
-    	        })
-    	        .catch(error => {
-    	            console.error("Error en la búsqueda:", error);
-    	            
-    	            if (error.message.includes("404")) {
-    	                mostrarError("❌ Ruta no encontrada. Verifica la URL del servidor.");
-    	            } else if (error.message.includes("Failed to fetch")) {
-    	                mostrarError("❌ No se pudo conectar al servidor.");
-    	            } else {
-    	                mostrarError(`❌ ${error.message || "Error al buscar paciente"}`);
-    	            }
-    	            
-    	            // Mostrar botón para nuevo paciente si el error es "no encontrado"
-    	            if (error.message.includes("Paciente no encontrado")) {
-    	                btnNuevoPaciente.style.display = "block";
-    	            } else {
-    	                btnNuevoPaciente.style.display = "none";
-    	            }
-    	        });
+        // Mostrar estado de carga
+        mensaje.textContent = "🔍 Buscando paciente...";
+        mensaje.style.color = "#2196F3";
 
-    	    function mostrarError(texto) {
-    	        mensaje.textContent = texto;
-    	        mensaje.style.color = "#f44336";
-    	        document.body.style.background = "linear-gradient(135deg, #ffcdd2 0%, #f44336 100%)";
-    	    }
-    	}
+        // Configurar la petición con URL ABSOLUTA
+        const url = `http://localhost:8080/ProyectoWeb01/farmacia?accion=buscarPaciente&dni=${encodeURIComponent(
+          dni
+        )}`;
+
+        // Opciones de la petición con CORS
+        const options = {
+          method: "GET",
+          mode: "cors", // Importante para peticiones entre contextos
+          headers: {
+            Accept: "application/json",
+          },
+        };
+
+        // Realizar la petición
+        fetch(url, options)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`Error HTTP: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (data.error) {
+              throw new Error(data.error);
+            }
+
+            // Autocompletar campos
+            document.getElementById("dniInput").value = data.dni || "";
+            document.getElementById("nombreInput").value = data.nombre || "";
+            document.getElementById("apellidoInput").value =
+              data.apellido || "";
+            document.getElementById("telefonoInput").value =
+              data.telefono || "";
+            document.getElementById("direccionInput").value =
+              data.direccion || "";
+            document.getElementById("correoInput").value = data.correo || "";
+            document.getElementById("fechaNacInput").value =
+              data.fechaNac || ""; // clave corregida
+
+            // Deshabilitar campos clave
+            document.getElementById("dniInput").disabled = true;
+            document.getElementById("nombreInput").disabled = true;
+            document.getElementById("apellidoInput").disabled = true;
+
+            // Mostrar éxito
+            mensaje.textContent = "✅ Paciente encontrado";
+            mensaje.style.color = "#2e7d32";
+            btnNuevoPaciente.style.display = "none";
+            document.body.style.background = "";
+
+            // Habilitar botón de registrar venta si hay productos
+            verificarBotonRegistrar();
+          })
+          .catch((error) => {
+            console.error("Error en la búsqueda:", error);
+
+            if (error.message.includes("404")) {
+              mostrarError(
+                "❌ Ruta no encontrada. Verifica la URL del servidor."
+              );
+            } else if (error.message.includes("Failed to fetch")) {
+              mostrarError("❌ No se pudo conectar al servidor.");
+            } else {
+              mostrarError(`❌ ${error.message || "Error al buscar paciente"}`);
+            }
+
+            // Mostrar botón para nuevo paciente si el error es "no encontrado"
+            if (error.message.includes("Paciente no encontrado")) {
+              btnNuevoPaciente.style.display = "block";
+            } else {
+              btnNuevoPaciente.style.display = "none";
+            }
+          });
+
+        function mostrarError(texto) {
+          mensaje.textContent = texto;
+          mensaje.style.color = "#f44336";
+          document.body.style.background =
+            "linear-gradient(135deg, #ffcdd2 0%, #f44336 100%)";
+        }
+      }
       function limpiarBusqueda() {
         document.getElementById("pacienteDni").value = "";
         document.getElementById("searchMessage").textContent = "";
@@ -644,7 +655,7 @@
           dni,
           nombre,
           apellido,
-          fechaNac,
+          fechaNac, // clave corregida
           telefono,
           direccion,
           correo,
@@ -675,130 +686,136 @@
       }
 
       function buscarMedicamento() {
-    	    const nombre = document.getElementById("medicamentoNombre").value.trim();
-    	    const mensaje = document.getElementById("medicamentoMessage");
-    	    
-    	    if (!nombre) {
-    	        mensaje.textContent = "⚠️ Ingrese un nombre de medicamento";
-    	        mensaje.style.color = "#f44336";
-    	        return;
-    	    }
+        const nombre = document
+          .getElementById("medicamentoNombre")
+          .value.trim();
+        const mensaje = document.getElementById("medicamentoMessage");
 
-    	    mensaje.textContent = "🔍 Buscando...";
-    	    mensaje.style.color = "#2196F3";
+        if (!nombre) {
+          mensaje.textContent = "⚠️ Ingrese un nombre de medicamento";
+          mensaje.style.color = "#f44336";
+          return;
+        }
 
-    	    // Limpiar resultados anteriores
-    	    document.getElementById("medicamentosList").innerHTML = "";
-    	    
-    	    // Codificar el parámetro para URL
-    	    const nombreCodificado = encodeURIComponent(nombre);
-    	    const url = `http://localhost:8080/ProyectoWeb01/farmacia?accion=buscarMedicamento&nombre=${nombreCodificado}`;
-    	    
-    	    console.log("URL de búsqueda:", url); // Debug
+        mensaje.textContent = "🔍 Buscando...";
+        mensaje.style.color = "#2196F3";
 
-    	    fetch(url)
-    	    .then(response => {
-    	        if (!response.ok) {
-    	            throw new Error(`Error HTTP: ${response.status}`);
-    	        }
-    	        return response.json();
-    	    })
-    	    .then(data => {
-    	        console.log("Respuesta recibida:", data); // Debug
-    	        
-    	        const lista = document.getElementById("medicamentosList");
-    	        
-    	        if (!data || data.length === 0) {
-    	            mensaje.textContent = "❌ No se encontraron medicamentos";
-    	            mensaje.style.color = "#f44336";
-    	            return;
-    	        }
-    	        
-    	        mensaje.textContent = `✅ ${data.length} medicamento(s) encontrado(s)`;
-    	        mensaje.style.color = "#4CAF50";
-    	        
-    	        data.forEach(med => {
-    	            const nombreMostrar = med.nombreComercial || med.nombreBase || "Sin nombre";
-    	            const concentracion = med.concentracion || "";
-    	            const stock = med.stock || 0;
-    	            const precio = med.precio ? med.precio.toFixed(2) : "0.00";
-    	            const id = med.idProducto || 0;
+        // Limpiar resultados anteriores
+        document.getElementById("medicamentosList").innerHTML = "";
 
-    	            const row = `
-    	            <tr>
-    	                <td>
-    	                    <div class="product-info">
-    	                        <strong>${nombreMostrar}</strong>
-    	                        <small>${concentracion}</small>
-    	                    </div>
-    	                </td>
-    	                <td><span class="quantity-badge">${stock}</span></td>
-    	                <td>S/ ${precio}</td>
-    	                <td>
-    	                    <input type="number" min="1" max="${stock}" 
-    	                           value="1" class="quantity-input" 
-    	                           id="qty-${id}">
-    	                </td>
-    	                <td>
-    	                    <button class="action-btn" 
-    	                            onclick="agregarAlCarrito(${id}, '${escapeHtml(nombreMostrar)}', ${med.precio || 0}, ${stock})"
-    	                            ${stock <= 0 ? 'disabled' : ''}>
-    	                        ${stock <= 0 ? '❌ Sin stock' : '➕ Agregar'}
-    	                    </button>
-    	                </td>
-    	            </tr>`;
-    	            lista.insertAdjacentHTML('beforeend', row);
-    	        });
-    	        
-    	        document.getElementById("medicamentoResultados").style.display = "block";
-    	    })
-    	    .catch(error => {
-    	        console.error("Error en la búsqueda:", error);
-    	        mensaje.textContent = `❌ ${error.message}`;
-    	        mensaje.style.color = "#f44336";
-    	    });
-    	}
+        // Codificar el parámetro para URL
+        const nombreCodificado = encodeURIComponent(nombre);
+        const url = `http://localhost:8080/ProyectoWeb01/farmacia?accion=buscarMedicamento&nombre=${nombreCodificado}`;
 
-    	// Función auxiliar para escape de HTML
-    	function escapeHtml(text) {
-    	    return text
-    	        .replace(/&/g, "&amp;")
-    	        .replace(/</g, "&lt;")
-    	        .replace(/>/g, "&gt;")
-    	        .replace(/"/g, "&quot;")
-    	        .replace(/'/g, "&#039;");
-    	}
+        console.log("URL de búsqueda:", url); // Debug
+
+        fetch(url)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`Error HTTP: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            console.log("Respuesta recibida:", data); // Debug
+
+            const lista = document.getElementById("medicamentosList");
+
+            if (!data || data.length === 0) {
+              mensaje.textContent = "❌ No se encontraron medicamentos";
+              mensaje.style.color = "#f44336";
+              return;
+            }
+
+            mensaje.textContent = `✅ ${data.length} medicamento(s) encontrado(s)`;
+            mensaje.style.color = "#4CAF50";
+
+            data.forEach((med) => {
+              const nombreMostrar =
+                med.nombreComercial || med.nombreBase || "Sin nombre";
+              const concentracion = med.concentracion || "";
+              const stock = med.stock || 0;
+              const precio = med.precio ? med.precio.toFixed(2) : "0.00";
+              const id = med.idProducto || 0;
+
+              const row = `
+                  <tr>
+                      <td>
+                          <div class="product-info">
+                              <strong>${nombreMostrar}</strong>
+                              <small>${concentracion}</small>
+                          </div>
+                      </td>
+                      <td><span class="quantity-badge">${stock}</span></td>
+                      <td>S/ ${precio}</td>
+                      <td>
+                          <input type="number" min="1" max="${stock}" 
+                                 value="1" class="quantity-input" 
+                                 id="qty-${id}">
+                      </td>
+                      <td>
+                          <button class="action-btn" 
+                                  onclick="agregarAlCarrito(${id}, '${escapeHtml(
+                nombreMostrar
+              )}', ${med.precio || 0}, ${stock})"
+                                  ${stock <= 0 ? "disabled" : ""}>
+                              ${stock <= 0 ? "❌ Sin stock" : "➕ Agregar"}
+                          </button>
+                      </td>
+                  </tr>`;
+              lista.insertAdjacentHTML("beforeend", row);
+            });
+
+            document.getElementById("medicamentoResultados").style.display =
+              "block";
+          })
+          .catch((error) => {
+            console.error("Error en la búsqueda:", error);
+            mensaje.textContent = `❌ ${error.message}`;
+            mensaje.style.color = "#f44336";
+          });
+      }
+
+      // Función auxiliar para escape de HTML
+      function escapeHtml(text) {
+        return text
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
 
       function agregarAlCarrito(id, nombre, precio, stockMax) {
-    	    const cantidad = parseInt(document.getElementById(`qty-${id}`).value);
-    	    
-    	    if (cantidad > stockMax) {
-    	        alert("❌ Cantidad solicitada excede el stock disponible.");
-    	        return;
-    	    }
+        const cantidad = parseInt(document.getElementById(`qty-${id}`).value);
 
-    	    const existeEnCarrito = carrito.find(item => item.id === id);
+        if (cantidad > stockMax) {
+          alert("❌ Cantidad solicitada excede el stock disponible.");
+          return;
+        }
 
-    	    if (existeEnCarrito) {
-    	        if ((existeEnCarrito.cantidad + cantidad) > stockMax) {
-    	            alert("❌ La cantidad total excede el stock disponible.");
-    	            return;
-    	        }
-    	        existeEnCarrito.cantidad += cantidad;
-    	        existeEnCarrito.subtotal = existeEnCarrito.cantidad * precio;
-    	    } else {
-    	        carrito.push({
-    	            id: id,
-    	            nombre: nombre,
-    	            precio: precio,
-    	            cantidad: cantidad,
-    	            subtotal: cantidad * precio
-    	        });
-    	    }
+        const existeEnCarrito = carrito.find((item) => item.id === id);
 
-    	    actualizarCarrito();
-    	    mostrarMensajeExito();
-    	}
+        if (existeEnCarrito) {
+          if (existeEnCarrito.cantidad + cantidad > stockMax) {
+            alert("❌ La cantidad total excede el stock disponible.");
+            return;
+          }
+          existeEnCarrito.cantidad += cantidad;
+          existeEnCarrito.subtotal = existeEnCarrito.cantidad * precio;
+        } else {
+          carrito.push({
+            id: id,
+            nombre: nombre,
+            precio: precio,
+            cantidad: cantidad,
+            subtotal: cantidad * precio,
+          });
+        }
+
+        actualizarCarrito();
+        mostrarMensajeExito();
+      }
 
       function actualizarCarrito() {
         const lista = document.getElementById("carritoList");
@@ -932,59 +949,51 @@
       });
 
       function registrarVenta() {
-    	    if (carrito.length === 0) {
-    	        alert("❌ El carrito está vacío.");
-    	        return;
-    	    }
-
-    	    const btnRegistrar = document.getElementById("btnRegistrar");
-    	    btnRegistrar.disabled = true;
-    	    btnRegistrar.textContent = "Procesando...";
-
-    	    const ventaData = {
-    	        dniPaciente: document.getElementById("dniInput").value,
-    	        formaPago: "Efectivo", // Puedes cambiarlo por un select
-    	        productos: carrito.map(item => ({
-    	            idProducto: item.id,
-    	            cantidad: item.cantidad,
-    	            precioUnitario: item.precio
-    	        })),
-    	        total: totalVenta
-    	    };
-
-    	    fetch('http://localhost:8080/ProyectoWeb01/farmacia?accion=registrarVentaSinReceta', {
-    	        method: 'POST',
-    	        headers: {
-    	            'Content-Type': 'application/json',
-    	        },
-    	        body: JSON.stringify(ventaData)
-    	    })
-    	    .then(response => {
-    	        if (!response.ok) throw new Error("Error en el servidor: " + response.status);
-    	        return response.json();
-    	    })
-    	    .then(data => {
-    	        if (data.error) throw new Error(data.error);
-    	        
-    	        // Éxito - Resetear todo
-    	        alert(`✅ Venta registrada (Factura #${data.idFactura})`);
-    	        carrito = [];
-    	        totalVenta = 0;
-    	        actualizarCarrito();
-    	        limpiarBusqueda();
-    	        
-    	        // Opcional: Redirigir a comprobante
-    	        // window.location.href = `factura.html?id=${data.idFactura}`;
-    	    })
-    	    .catch(error => {
-    	        console.error("Error:", error);
-    	        alert(`❌ Error al registrar: ${error.message}`);
-    	    })
-    	    .finally(() => {
-    	        btnRegistrar.textContent = "✅ Registrar Venta";
-    	        btnRegistrar.disabled = false;
-    	    });
-    	}
+        // Validar datos del paciente
+        const dni = document.getElementById("dniInput").value.trim();
+        const nombre = document.getElementById("nombreInput").value.trim();
+        const apellido = document.getElementById("apellidoInput").value.trim();
+        const telefono = document.getElementById("telefonoInput").value.trim();
+        const direccion = document
+          .getElementById("direccionInput")
+          .value.trim();
+        if (!dni || !nombre || !apellido || !telefono || !direccion) {
+          alert(
+            "❌ Completa todos los datos del paciente antes de registrar la venta."
+          );
+          return;
+        }
+        if (carrito.length === 0) {
+          alert("❌ El carrito está vacío. Agrega al menos un producto.");
+          return;
+        }
+        // Construir datos del paciente
+        const paciente = {
+          dni,
+          nombre,
+          apellido,
+          telefono,
+          direccion,
+          correo: document.getElementById("correoInput").value.trim(),
+          fechaNac: document.getElementById("fechaNacInput").value.trim()
+        };
+        const productos = carrito.map((item) => ({
+          idProducto: item.id,
+          nombre: item.nombre,
+          cantidad: item.cantidad,
+          precioUnitario: item.precio,
+          subtotal: item.subtotal
+        }));
+        const ventaData = {
+          paciente: paciente,
+          productos: productos,
+          tipoCliente: "Externo",
+          conReceta: false
+        };
+        localStorage.setItem("ventaActual", JSON.stringify(ventaData));
+        window.location.href = "registro_pago.html";
+      }
     </script>
   </body>
+</html>
 </html>
