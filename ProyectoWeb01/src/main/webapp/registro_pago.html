@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro de Pago - Factura/Boleta</title>
+    <link rel="stylesheet" href="source/estilos_farmacia.css" />
+  </head>
+  <body>
+    <header>
+      <h1>🧾 Registro de Pago de Factura/Boleta</h1>
+    </header>
+    <div class="main-container">
+      <div
+        style="display: flex; justify-content: flex-end; margin-bottom: 20px"
+      >
+        <button
+          onclick="window.location.href='dashboard_farmacia.html'"
+          style="
+            background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(100, 181, 246, 0.2);
+          "
+        >
+          ⬅️ Volver al Dashboard
+        </button>
+      </div>
+      <div class="content-grid">
+        <!-- Datos del Cliente -->
+        <div class="card full-width">
+          <div class="card-header">
+            <span class="card-icon">👤</span>
+            <h3 class="card-title">Datos del Cliente</h3>
+          </div>
+          <div class="patient-grid">
+            <div class="info-item">
+              <span class="info-label">Tipo de Cliente:</span>
+              <select class="info-value">
+                <option>Interno</option>
+                <option>Externo</option>
+              </select>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Nombre:</span>
+              <input class="info-value styled-input" type="text" value="" />
+            </div>
+            <div class="info-item">
+              <span class="info-label">Apellido:</span>
+              <input class="info-value styled-input" type="text" value="" />
+            </div>
+            <div class="info-item">
+              <span class="info-label">DNI:</span>
+              <input class="info-value styled-input" type="text" value="" />
+            </div>
+            <div class="info-item">
+              <span class="info-label">Fecha de Nac.:</span>
+              <input class="info-value styled-input" type="text" value="" />
+            </div>
+            <div class="info-item">
+              <span class="info-label">Teléfono:</span>
+              <input class="info-value styled-input" type="text" value="" />
+            </div>
+            <div class="info-item">
+              <span class="info-label">Correo:</span>
+              <input class="info-value styled-input" type="text" value="" />
+            </div>
+            <div class="info-item">
+              <span class="info-label">Dirección:</span>
+              <input class="info-value styled-input" type="text" value="" />
+            </div>
+          </div>
+        </div>
+        <!-- Datos de la Receta (solo si conReceta) -->
+        <div class="card full-width" id="recetaCard" style="display: none">
+          <div class="card-header">
+            <span class="card-icon">📄</span>
+            <h3 class="card-title">Datos de la Receta</h3>
+          </div>
+          <div class="patient-grid">
+            <div class="info-item">
+              <span class="info-label">ID Receta:</span>
+              <input
+                class="info-value styled-input"
+                id="recetaIdInput"
+                type="text"
+                value=""
+              />
+            </div>
+            <div class="info-item">
+              <span class="info-label">Fecha:</span>
+              <input
+                class="info-value styled-input"
+                id="recetaFechaInput"
+                type="text"
+                value=""
+              />
+            </div>
+            <div class="info-item" style="grid-column: 1 / span 2">
+              <span class="info-label">Médico:</span>
+              <input
+                class="info-value styled-input"
+                id="medicoInput"
+                type="text"
+                value=""
+                style="width: 60%"
+              />
+            </div>
+          </div>
+        </div>
+        <!-- Productos Recetados -->
+        <div class="card full-width">
+          <div class="card-header">
+            <span class="card-icon">💊</span>
+            <h3 class="card-title">Productos Recetados</h3>
+          </div>
+          <div class="table-container">
+            <table class="products-table">
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Cantidad</th>
+                  <th>Precio Unitario</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Paracetamol</td>
+                  <td>2</td>
+                  <td>S/ 2.00</td>
+                  <td>S/ 4.00</td>
+                </tr>
+                <tr>
+                  <td>Ibuprofeno</td>
+                  <td>1</td>
+                  <td>S/ 3.50</td>
+                  <td>S/ 3.50</td>
+                </tr>
+                <!-- Puedes agregar más productos aquí -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- Datos de Pago -->
+        <div class="card full-width">
+          <div class="card-header">
+            <span class="card-icon">💳</span>
+            <h3 class="card-title">Datos de Pago</h3>
+          </div>
+          <div class="patient-grid">
+            <div class="info-item">
+              <span class="info-label">Tipo de Comprobante:</span>
+              <select class="info-value">
+                <option>Boleta</option>
+                <option>Factura</option>
+              </select>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Seguro/Servicio:</span>
+              <select class="info-value">
+                <option>Particular</option>
+                <option>Seguro</option>
+              </select>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Tipo de Pago:</span>
+              <select class="info-value">
+                <option>Tarjeta Crédito</option>
+                <option>Tarjeta Débito</option>
+                <option>Efectivo</option>
+              </select>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Subtotal:</span>
+              <span class="info-value" id="subtotal">S/ 7.50</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">IGV (18%):</span>
+              <span class="info-value" id="igv">S/ 1.35</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">TOTAL A PAGAR:</span>
+              <span
+                class="info-value"
+                id="total"
+                style="font-weight: bold; color: #1976d2"
+                >S/ 8.85</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="button-container">
+        <button class="primary-button" onclick="confirmarPago()">
+          ✅ Confirmar Pago y Generar Comprobante
+        </button>
+      </div>
+    </div>
+    <script>
+      // Estilo para los inputs y carga de datos de la venta
+      document.addEventListener("DOMContentLoaded", function () {
+        const styledInputs = document.querySelectorAll(".styled-input");
+        styledInputs.forEach((input) => {
+          input.style.background = "rgba(227, 242, 253, 0.8)";
+          input.style.padding = "8px 15px";
+          input.style.borderRadius = "8px";
+          input.style.color = "#0d47a1";
+          input.style.fontWeight = "500";
+          input.style.border = "1px solid rgba(144, 202, 249, 0.4)";
+          input.style.width = "100%";
+        });
+        cargarVenta();
+        // Selección automática de tipo de cliente
+        const venta = JSON.parse(localStorage.getItem("ventaActual")) || {};
+        const tipoClienteSelect = document.querySelector(".info-item select");
+        if (venta.tipoCliente === "Interno") {
+          tipoClienteSelect.value = "Interno";
+        } else {
+          tipoClienteSelect.value = "Externo";
+        }
+      });
+
+      function cargarVenta() {
+        const venta = JSON.parse(localStorage.getItem("ventaActual")) || {};
+        let inputs = document.querySelectorAll(".styled-input");
+        if (inputs.length >= 7 && venta.paciente) {
+          inputs[0].value = venta.paciente.nombre || "";
+          inputs[1].value = venta.paciente.apellido || "";
+          inputs[2].value = venta.paciente.dni || "";
+          inputs[3].value = venta.paciente.fechaNac || "";
+          inputs[4].value = venta.paciente.telefono || "";
+          inputs[5].value = venta.paciente.correo || "";
+          inputs[6].value = venta.paciente.direccion || "";
+        }
+        const recetaCard = document.getElementById("recetaCard");
+        if (venta.conReceta && venta.receta) {
+          recetaCard.style.display = "";
+          document.getElementById("recetaIdInput").value =
+            venta.receta.id || "";
+          document.getElementById("recetaFechaInput").value =
+            venta.receta.fecha || "";
+          document.getElementById("medicoInput").value = (
+            (venta.receta.medico?.nombre || "") +
+            " " +
+            (venta.receta.medico?.apellido || "")
+          ).trim();
+        } else {
+          recetaCard.style.display = "none";
+        }
+        // Mostrar productos reales del carrito
+        const tbody = document.querySelector(".products-table tbody");
+        tbody.innerHTML = "";
+        if (venta.productos && venta.productos.length > 0) {
+          venta.productos.forEach((p) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td>${
+              p.nombre || p.nombreComercial || ""
+            }</td><td>${p.cantidad}</td><td>S/ ${(
+              p.precioUnitario || p.precio
+            ).toFixed(2)}</td><td>S/ ${(
+              (p.precioUnitario || p.precio) * p.cantidad
+            ).toFixed(2)}</td>`;
+            tbody.appendChild(tr);
+          });
+        } else {
+          // Si no hay productos, muestra mensaje
+          const tr = document.createElement("tr");
+          tr.innerHTML =
+            '<td colspan="4" style="text-align:center;color:#888;">No hay productos seleccionados</td>';
+          tbody.appendChild(tr);
+        }
+        calcularTotales();
+      }
+
+      // Cálculo automático de totales
+      function calcularTotales() {
+        let subtotal = 0;
+        document.querySelectorAll(".products-table tbody tr").forEach((row) => {
+          const cantidad = parseFloat(row.children[1].textContent);
+          const precio = parseFloat(
+            row.children[2].textContent.replace("S/", "").replace(",", ".")
+          );
+          subtotal += cantidad * precio;
+        });
+        // Descuento por seguro
+        const seguroSelect = document.querySelectorAll(".info-item select")[1];
+        let descuento = 0;
+        if (seguroSelect.value === "Seguro") {
+          descuento = subtotal * 0.2;
+        }
+        const igv = +((subtotal - descuento) * 0.18).toFixed(2);
+        const total = +(subtotal - descuento + igv).toFixed(2);
+        document.getElementById("subtotal").textContent =
+          "S/ " + (subtotal - descuento).toFixed(2);
+        document.getElementById("igv").textContent = "S/ " + igv.toFixed(2);
+        document.getElementById("total").textContent = "S/ " + total.toFixed(2);
+      }
+
+      // Recalcular totales al cambiar seguro/servicio
+      document.addEventListener("DOMContentLoaded", function () {
+        const seguroSelect = document.querySelectorAll(".info-item select")[1];
+        seguroSelect.addEventListener("change", calcularTotales);
+      });
+
+      function confirmarPago() {
+        const venta = JSON.parse(localStorage.getItem("ventaActual")) || {};
+        // Calcular descuento si corresponde
+        let total = 0;
+        if (venta.productos) {
+          venta.productos.forEach((p) => {
+            total += (p.precioUnitario || p.precio) * p.cantidad;
+          });
+        }
+        // Si usa seguro, aplicar 20% descuento
+        const seguroSelect = document.querySelectorAll(".info-item select")[1];
+        if (seguroSelect.value === "Seguro") {
+          total = total * 0.8;
+        }
+        venta.total = total;
+        venta.formaPago =
+          document.querySelectorAll(".info-item select")[2].value;
+        venta.tipoComprobante =
+          document.querySelectorAll(".info-item select")[0].value;
+
+        // Si es venta con receta (Interno)
+        if (venta.conReceta && venta.receta && venta.receta.id) {
+          // Enviar como formulario x-www-form-urlencoded
+          const params = new URLSearchParams();
+          params.append("idReceta", venta.receta.id);
+          params.append("formaPago", venta.formaPago);
+          // Usa URL absoluta si tu backend está en otro puerto/contexto
+          const url =
+            window.location.origin +
+            "/ProyectoWeb01/farmacia?accion=registrarventa";
+          fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: params.toString(),
+          })
+            .then((resp) => {
+              if (!resp.ok) throw new Error("Error HTTP: " + resp.status);
+              return resp.text();
+            })
+            .then((data) => {
+              localStorage.removeItem("ventaActual");
+              window.location.href = "Hventa.html";
+            })
+            .catch((err) => {
+              alert(
+                "Error de red al registrar la venta. Verifica conexión y backend."
+              );
+              console.error(err);
+            });
+        } else {
+          // Venta sin receta (Externo)
+          const url =
+            window.location.origin +
+            "/ProyectoWeb01/farmacia?accion=registrarventasinreceta";
+          fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              dniPaciente: venta.paciente.dni,
+              productos: venta.productos.map((p) => ({
+                idProducto: p.idProducto,
+                cantidad: p.cantidad,
+                precioUnitario: p.precioUnitario,
+              })),
+              total: venta.total,
+              formaPago: venta.formaPago,
+              tipoComprobante: venta.tipoComprobante,
+            }),
+          })
+            .then((resp) => {
+              if (!resp.ok) throw new Error("Error HTTP: " + resp.status);
+              return resp.json();
+            })
+            .then((data) => {
+              if (data.success) {
+                localStorage.removeItem("ventaActual");
+                window.location.href = "Hventa.html";
+              } else {
+                alert(
+                  "Error al registrar la venta: " +
+                    (data.error || "Error desconocido")
+                );
+              }
+            })
+            .catch((err) => {
+              alert(
+                "Error de red al registrar la venta. Verifica conexión y backend."
+              );
+              console.error(err);
+            });
+        }
+      }
+    </script>
+  </body>
+</html>

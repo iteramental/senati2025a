@@ -1,0 +1,191 @@
+package far.jpa;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+@Entity
+@Table(name = "factura_emitida")
+public class FacturaEmitidaJPA {
+    // Constructor por defecto que inicializa contabilizada
+    public FacturaEmitidaJPA() {
+        this.contabilizada = "N";
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_factura")
+    private int idFactura;
+
+    @Column(name = "fecha_emision", nullable = false)
+    @Temporal(TemporalType.DATE)
+    private Date fechaEmision;
+
+    @Column(name = "id_departamento", nullable = false)
+    private int idDepartamento;
+
+    @ManyToOne
+    @JoinColumn(name = "id_paciente")
+    private PacienteJPA paciente;
+
+    @Column(name = "total", nullable = false)
+    private BigDecimal total;
+
+    @Column(name = "forma_pago")
+    private String formaPago; // Efectivo, Crédito, Débito
+
+    @Column(name = "estado_pago", nullable = false)
+    private String estadoPago; // Pendiente, Pagado, Anulada
+
+    @Column(name = "contabilizada", nullable = false, length = 1)
+    private String contabilizada = "N"; // S o N, valor por defecto
+
+    @Column(name = "glosa")
+    private String glosa;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    @Column(name = "updated_at", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+
+    @Column(name = "tipo_venta", nullable = false)
+    private String tipoVenta; // Receta o Externo
+    
+ // Añade esta relación
+    @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DetalleFacturaEmitidaJPA> detalles = new ArrayList<>();
+
+    // Getters y Setters
+
+    public int getIdFactura() {
+        return idFactura;
+    }
+
+    public void setIdFactura(int idFactura) {
+        this.idFactura = idFactura;
+    }
+
+    public List<DetalleFacturaEmitidaJPA> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<DetalleFacturaEmitidaJPA> detalles) {
+        this.detalles = detalles;
+    }
+
+
+    public Date getFechaEmision() {
+        return fechaEmision;
+    }
+    // Método helper para agregar detalles
+    public void addDetalle(DetalleFacturaEmitidaJPA detalle) {
+        detalles.add(detalle);
+        detalle.setFactura(this);
+    }
+
+    // Método helper para remover detalles
+    public void removeDetalle(DetalleFacturaEmitidaJPA detalle) {
+        detalles.remove(detalle);
+        detalle.setFactura(null);
+    }
+
+    public void setFechaEmision(Date fechaEmision) {
+        this.fechaEmision = fechaEmision;
+    }
+
+    public int getIdDepartamento() {
+        return idDepartamento;
+    }
+
+    public void setIdDepartamento(int idDepartamento) {
+        this.idDepartamento = idDepartamento;
+    }
+
+    public PacienteJPA getPaciente() {
+        return paciente;
+    }
+
+    public void setPaciente(PacienteJPA paciente) {
+        this.paciente = paciente;
+    }
+
+    public BigDecimal getTotal() {
+        return total;
+    }
+
+    public void setTotal(BigDecimal total) {
+        this.total = total;
+    }
+
+    public String getFormaPago() {
+        return formaPago;
+    }
+
+    public void setFormaPago(String formaPago) {
+        this.formaPago = formaPago;
+    }
+
+    public String getEstadoPago() {
+        return estadoPago;
+    }
+
+    public void setEstadoPago(String estadoPago) {
+        this.estadoPago = estadoPago;
+    }
+
+    public String getContabilizada() {
+        return contabilizada;
+    }
+
+    public void setContabilizada(String contabilizada) {
+        this.contabilizada = contabilizada;
+    }
+
+    public String getGlosa() {
+        return glosa;
+    }
+
+    public void setGlosa(String glosa) {
+        this.glosa = glosa;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getTipoVenta() {
+        return tipoVenta;
+    }
+
+    public void setTipoVenta(String tipoVenta) {
+        this.tipoVenta = tipoVenta;
+    }
+}

@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Venta por Receta - Módulo Farmacia</title>
+    <link rel="stylesheet" href="source/estilos_farmacia.css" />
+  </head>
+  <body>
+    <header>
+      <h1>🏥 Venta de Medicamentos</h1>
+    </header>
+
+    <div class="main-container">
+      <div class="nav-tabs">
+        <div
+          class="button-container"
+          style="margin-bottom: 30px; text-align: left"
+        >
+          <a
+            href="dashboard_farmacia.html"
+            class="primary-button"
+            style="
+              padding: 12px 25px;
+              display: inline-flex;
+              align-items: center;
+              text-decoration: none;
+            "
+          >
+            ← Volver
+          </a>
+        </div>
+        <button class="tab-button active">📋 Venta por Receta</button>
+        <button
+          class="tab-button"
+          onclick="location.href='venta_sin_receta.html'"
+        >
+          🛒 Venta sin Receta
+        </button>
+      </div>
+
+      <!-- Buscador -->
+      <div class="search-container">
+        <div class="search-card">
+          <div class="search-header">
+            <span class="search-icon">🔍</span>
+            <h3 class="search-title">Buscar Receta</h3>
+          </div>
+          <div class="search-form">
+            <input
+              type="text"
+              id="recetaId"
+              class="search-input"
+              placeholder="Ingrese el ID de la receta (ej: REC-001)"
+              maxlength="20"
+            />
+            <button class="search-button" onclick="buscarReceta()">
+              🔍 Buscar
+            </button>
+            <button class="clear-button" onclick="limpiarBusqueda()">
+              🗑️ Limpiar
+            </button>
+          </div>
+          <div id="searchMessage" class="search-message"></div>
+        </div>
+      </div>
+
+      <!-- CONTENIDO OCULTO AL INICIO -->
+      <div class="venta-container" style="display: none">
+        <!-- Grid de contenido -->
+        <div class="content-grid">
+          <!-- Información de la Receta -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-icon">📄</span>
+              <h3 class="card-title">Información de la Receta</h3>
+            </div>
+            <div class="info-container">
+              <div class="info-item">
+                <span class="info-label">Número de Receta:</span>
+                <span class="info-value receta-id"></span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Fecha de Emisión:</span>
+                <span class="info-value fecha-emision"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Datos del Médico -->
+          <div class="card">
+            <div class="card-header">
+              <span class="card-icon">👨‍⚕️</span>
+              <h3 class="card-title">Médico Tratante</h3>
+            </div>
+            <div class="info-container">
+              <div class="info-item">
+                <span class="info-label">Nombre:</span>
+                <span class="info-value medico-nombre"></span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Apellido:</span>
+                <span class="info-value medico-apellido"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Datos del Paciente -->
+          <div class="card full-width">
+            <div class="card-header">
+              <span class="card-icon">👤</span>
+              <h3 class="card-title">Información del Paciente</h3>
+            </div>
+            <div class="patient-grid">
+              <div class="info-item">
+                <span class="info-label">Nombre:</span>
+                <span class="info-value paciente-nombre"></span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Apellido:</span>
+                <span class="info-value paciente-apellido"></span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">DNI:</span>
+                <span class="info-value paciente-dni"></span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Fecha de Nac:</span>
+                <span class="info-value paciente-nac"></span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Teléfono:</span>
+                <span class="info-value paciente-telefono"></span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Correo:</span>
+                <span class="info-value paciente-correo"></span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Dirección:</span>
+                <span class="info-value paciente-direccion"></span>
+              </div>
+            </div>
+
+            <!-- Confirmación debajo de los datos -->
+            <div class="confirm-container" id="confirmContainer">
+              <p>¿Es este el paciente correcto?</p>
+              <div class="confirm-buttons">
+                <button class="confirm" onclick="confirmarPaciente()">
+                  ✅ Sí, continuar
+                </button>
+                <button class="decline" onclick="declinarPaciente()">
+                  ❌ No es el paciente
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Productos Recetados -->
+          <div
+            class="card full-width productos-container"
+            style="display: none"
+          >
+            <div class="card-header">
+              <span class="card-icon">💊</span>
+              <h3 class="card-title">Productos Recetados</h3>
+            </div>
+            <div class="table-container">
+              <table class="products-table">
+                <thead>
+                  <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Subtotal</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Los productos se llenan dinámicamente con JS -->
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="3" class="total-label">TOTAL A PAGAR:</td>
+                    <td colspan="2" class="total-amount">S/ 0.00</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+
+          <!-- Botón de acción principal -->
+          <div
+            class="button-container productos-container"
+            style="display: none; text-align: center; margin-top: 30px"
+          >
+            <button
+              id="btnRegistrarVenta"
+              class="primary-button"
+              onclick="registrarVenta()"
+            >
+              ✅ Registrar Venta
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let recetaEncontrada = false;
+      let datosPaciente = null;
+      let productosRecetados = [];
+      let recetaInfo = null;
+
+      async function buscarReceta() {
+        const recetaId = document.getElementById("recetaId").value.trim();
+        const mensaje = document.getElementById("searchMessage");
+
+        if (recetaId === "") {
+          mensaje.textContent = "⚠️ Por favor, ingresa un ID de receta.";
+          mensaje.style.color = "#f44336";
+          return;
+        }
+
+        mensaje.textContent = "Buscando receta...";
+        mensaje.style.color = "#1565c0";
+
+        try {
+          // Petición al backend para buscar receta
+          const response = await fetch(
+            `farmacia?accion=buscarreceta&idReceta=${encodeURIComponent(
+              recetaId
+            )}`
+          );
+          if (!response.ok) throw new Error("Receta no encontrada");
+          const receta = await response.json();
+
+          // Mostrar contenedor de datos
+          document.querySelector(".venta-container").style.display = "block";
+          document.getElementById("confirmContainer").style.display = "block";
+          mensaje.textContent = "";
+
+          // Llenar datos de receta, médico y paciente
+          document.querySelector(".receta-id").textContent =
+            receta.idReceta || recetaId;
+          document.querySelector(".fecha-emision").textContent =
+            receta.fechaEmision || "";
+          document.querySelector(".medico-nombre").textContent =
+            receta.medico?.nombre || "";
+          document.querySelector(".medico-apellido").textContent =
+            receta.medico?.apellido || "";
+          document.querySelector(".paciente-nombre").textContent =
+            receta.paciente?.nombre || "";
+          document.querySelector(".paciente-apellido").textContent =
+            receta.paciente?.apellido || "";
+          document.querySelector(".paciente-dni").textContent =
+            receta.paciente?.dni || "";
+          document.querySelector(".paciente-nac").textContent =
+            receta.paciente?.fechaNacimiento || "";
+          document.querySelector(".paciente-telefono").textContent =
+            receta.paciente?.telefono || "";
+          document.querySelector(".paciente-correo").textContent =
+            receta.paciente?.correo || "";
+          document.querySelector(".paciente-direccion").textContent =
+            receta.paciente?.direccion || "";
+          // Guardar datos del paciente para confirmación
+          datosPaciente = receta.paciente || null;
+
+          recetaInfo = {
+            id: receta.idReceta || recetaId,
+            fecha: receta.fechaEmision || "",
+            medico: receta.medico || {},
+          };
+
+          // Llenar productos recetados
+          const productosContainer = document.querySelectorAll(
+            ".productos-container"
+          );
+          productosContainer.forEach((e) => (e.style.display = "none"));
+          const tbody = document.querySelector(".products-table tbody");
+          tbody.innerHTML = "";
+          productosRecetados = [];
+          let total = 0;
+          if (receta.detalles && receta.detalles.length > 0) {
+            receta.detalles.forEach((det, idx) => {
+              const precio = det.producto?.precio || 0;
+              const cantidad = det.cantidad || 0;
+              const subtotal = precio * cantidad;
+              total += subtotal;
+              productosRecetados.push({
+                idProducto: det.producto?.idProducto || 0,
+                nombre:
+                  det.producto?.nombreComercial ||
+                  det.producto?.nombreBase ||
+                  "",
+                cantidad: cantidad,
+                precioUnitario: precio,
+                subtotal: subtotal,
+                indicacion: det.indicacion || "",
+              });
+              // Mostrar indicación si existe
+              let indicacionExtra = "";
+              if (det.indicacion && det.indicacion.trim() !== "") {
+                indicacionExtra = `<div style='font-size:12px;color:#1565c0;'>Indicaciones: ${det.indicacion}</div>`;
+              }
+              const tr = document.createElement("tr");
+              tr.innerHTML = `
+              <td>
+                <div class='product-info'>
+                  <strong>${
+                    det.producto?.nombreComercial ||
+                    det.producto?.nombreBase ||
+                    ""
+                  }</strong>
+                  <small>${det.producto?.concentracion || ""}</small>
+                  ${indicacionExtra}
+                </div>
+              </td>
+              <td><span class='quantity-badge'>${cantidad}</span></td>
+              <td>S/ ${precio.toFixed(2)}</td>
+              <td class='subtotal'>S/ ${subtotal.toFixed(2)}</td>
+              <td>
+                <button class='action-btn edit-btn'>✏️</button>
+                <button class='action-btn delete-btn'>🗑️</button>
+              </td>
+            `;
+              tbody.appendChild(tr);
+            });
+            document.querySelector(
+              ".total-amount"
+            ).textContent = `S/ ${total.toFixed(2)}`;
+            productosContainer.forEach((e) => (e.style.display = "block"));
+            // Habilitar botón de venta si hay productos
+            document.querySelector(".primary-button").disabled = false;
+          } else {
+            // Mostrar mensaje si no hay productos
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td colspan='5' style='text-align:center;color:#888;'>No hay productos recetados.</td>`;
+            tbody.appendChild(tr);
+            document.querySelector(".total-amount").textContent = "S/ 0.00";
+            // Deshabilitar botón de venta si no hay productos
+            document.querySelector(".primary-button").disabled = true;
+          }
+        } catch (error) {
+          mensaje.textContent = "❌ Receta no encontrada.";
+          mensaje.style.color = "#f44336";
+          document.querySelector(".venta-container").style.display = "none";
+        }
+      }
+
+      function confirmarPaciente() {
+        if (!datosPaciente) {
+          document.getElementById("searchMessage").textContent =
+            "❌ Paciente no encontrado.";
+          document.querySelector(".venta-container").style.display = "none";
+          return;
+        }
+        // Aquí podrías agregar lógica adicional para validar el paciente si lo necesitas
+        document
+          .querySelectorAll(".productos-container")
+          .forEach((e) => (e.style.display = "block"));
+        document.getElementById("confirmContainer").style.display = "none";
+        document.getElementById("searchMessage").textContent = "";
+      }
+
+      function declinarPaciente() {
+        limpiarBusqueda();
+        document.querySelector(".venta-container").style.display = "none";
+        document
+          .querySelectorAll(".productos-container")
+          .forEach((e) => (e.style.display = "none"));
+        document.getElementById("confirmContainer").style.display = "none";
+      }
+
+      function limpiarBusqueda() {
+        document.getElementById("recetaId").value = "";
+        document.getElementById("searchMessage").textContent = "";
+      }
+
+      function registrarNuevoPaciente() {
+        alert("Redirigiendo al formulario de registro de paciente...");
+        // window.location.href = "registro_paciente.html";
+      }
+
+      function registrarVenta() {
+        if (!datosPaciente) {
+          alert("❌ No se encontró información del paciente.");
+          return;
+        }
+        if (!Array.isArray(productosRecetados) || productosRecetados.length === 0) {
+          alert("❌ No hay productos recetados para registrar la venta.");
+          return;
+        }
+        if (!recetaInfo) {
+          alert("❌ No se encontró información de la receta.");
+          return;
+        }
+        // Guardar todos los datos en localStorage
+        const ventaData = {
+          paciente: datosPaciente,
+          productos: productosRecetados,
+          tipoCliente: "Interno",
+          receta: recetaInfo,
+          conReceta: true
+        };
+        localStorage.setItem("ventaActual", JSON.stringify(ventaData));
+        window.location.href = "registro_pago.html";
+      }
+      document.addEventListener("DOMContentLoaded", () => {
+        document
+          .querySelector(".products-table")
+          .addEventListener("click", function (e) {
+            if (e.target.closest(".edit-btn")) {
+              handleEdit(e.target.closest("tr"));
+            }
+            if (e.target.closest(".delete-btn")) {
+              handleDelete(e.target.closest("tr"));
+            }
+          });
+      });
+      function handleEdit(row) {
+        const qtyCell = row.querySelector(".quantity-badge");
+        const priceCell = row.cells[2];
+        const subtotalCell = row.querySelector(".subtotal");
+
+        let currentQty = parseInt(qtyCell.textContent, 10);
+        let newQty = prompt("Ingrese la nueva cantidad:", currentQty);
+
+        if (newQty === null) return; // cancelado
+
+        newQty = parseInt(newQty, 10);
+
+        if (isNaN(newQty) || newQty <= 0) {
+          alert("Cantidad inválida.");
+          return;
+        }
+
+        // Actualizar cantidad
+        qtyCell.textContent = newQty;
+
+        // Calcular nuevo subtotal
+        let price = parseFloat(priceCell.textContent.replace(/[^\d.]/g, ""));
+        let newSubtotal = (price * newQty).toFixed(2);
+        subtotalCell.textContent = `S/ ${newSubtotal}`;
+
+        // Recalcular total
+        recalculateTotal();
+      }
+
+      function handleDelete(row) {
+        if (confirm("¿Deseas eliminar este producto?")) {
+          row.remove();
+          recalculateTotal();
+        }
+      }
+
+      function recalculateTotal() {
+        let total = 0;
+        document.querySelectorAll(".products-table tbody tr").forEach((tr) => {
+          const subtotalCell = tr.querySelector(".subtotal");
+          if (subtotalCell) {
+            let subtotal = parseFloat(
+              subtotalCell.textContent.replace(/[^\d.]/g, "")
+            );
+            total += subtotal;
+          }
+        });
+        document.querySelector(
+          ".total-amount"
+        ).textContent = `S/ ${total.toFixed(2)}`;
+      }
+    </script>
+  </body>
+</html>
+  </body>
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🏥 Historial de Ventas - Farmacia</title>
+    <link rel="stylesheet" href="source/estilos_farmacia.css" />
+  </head>
+  <body>
+    <header>
+      <h1>🏥 Historial de Ventas - Farmacia</h1>
+      <a href="dashboard_farmacia.html" class="back-button"
+        >⬅️ Volver al Dashboard</a
+      >
+    </header>
+
+    <div id="ventas-container">
+      <div id="loading-message" style="text-align: center; padding: 40px">
+        <div
+          style="
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(100, 181, 246, 0.3);
+            border-radius: 50%;
+            border-top-color: #42a5f5;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto;
+          "
+        ></div>
+        <p style="color: #1565c0; font-size: 18px; margin-top: 15px">
+          Cargando historial de ventas...
+        </p>
+      </div>
+
+      <div
+        id="error-message"
+        style="
+          display: none;
+          background: rgba(244, 67, 54, 0.1);
+          padding: 20px;
+          border-radius: 12px;
+          text-align: center;
+          margin: 20px 0;
+          border: 1px solid rgba(244, 67, 54, 0.3);
+        "
+      >
+        <p
+          id="error-text"
+          style="color: #d32f2f; margin-bottom: 15px; font-weight: 500"
+        >
+          ⚠️ No se pudo cargar el historial de ventas. Intente nuevamente.
+        </p>
+        <button
+          onclick="cargarHistorialVentas()"
+          style="
+            background: #d32f2f;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+            box-shadow: 0 2px 8px rgba(211, 47, 47, 0.3);
+          "
+        >
+          Reintentar
+        </button>
+        <div
+          id="error-details"
+          style="margin-top: 10px; font-size: 12px; color: #666"
+        ></div>
+      </div>
+    </div>
+
+    <script>
+      // URL base para la API
+      const API_BASE_URL = window.location.origin + "/ProyectoWeb01";
+
+      async function cargarHistorialVentas() {
+        const container = document.getElementById("ventas-container");
+        const loading = document.getElementById("loading-message");
+        const errorMsg = document.getElementById("error-message");
+        const errorText = document.getElementById("error-text");
+        const errorDetails = document.getElementById("error-details");
+
+        loading.style.display = "block";
+        errorMsg.style.display = "none";
+        errorDetails.textContent = "";
+
+        try {
+          // Limpiar tarjetas previas
+          container
+            .querySelectorAll(".venta-card, .empty-message")
+            .forEach((el) => el.remove());
+
+          const url = `${API_BASE_URL}/farmacia?accion=listarhistorial`;
+          const response = await fetch(url);
+
+          if (!response.ok) {
+            throw new Error(
+              `Error HTTP ${response.status}: ${response.statusText}`
+            );
+          }
+
+          const ventas = await response.json();
+
+          loading.style.display = "none";
+
+          if (!ventas || ventas.length === 0) {
+            const emptyMsg = document.createElement("div");
+            emptyMsg.style.textAlign = "center";
+            emptyMsg.style.padding = "40px";
+            emptyMsg.style.color = "#42a5f5";
+            emptyMsg.style.fontStyle = "italic";
+            emptyMsg.innerHTML = "<p>No hay ventas registradas</p>";
+            container.appendChild(emptyMsg);
+            return;
+          }
+
+          ventas.forEach((venta) => {
+            const card = crearCardVenta(venta);
+            container.appendChild(card);
+          });
+        } catch (error) {
+          loading.style.display = "none";
+          errorText.textContent = "⚠️ Error al cargar el historial de ventas";
+          errorDetails.textContent = error.message;
+          errorMsg.style.display = "block";
+        }
+      }
+
+      function crearCardVenta(venta) {
+        const card = document.createElement("div");
+        card.className = "venta-card";
+
+        // Cabecera
+        const header = document.createElement("div");
+        header.className = "sale-header";
+        header.innerHTML = `
+        <span>Venta #${venta.idFactura.toString().padStart(3, "0")}</span>
+        <span>${venta.fechaEmision || "Fecha no disponible"}</span>
+      `;
+        card.appendChild(header);
+
+        // Info del paciente/cliente
+        const pacienteInfo = document.createElement("div");
+        pacienteInfo.className = "patient-grid";
+
+        if (venta.dniPaciente) {
+          pacienteInfo.innerHTML = `
+          <div class="info-item">
+            <strong>DNI:</strong> ${venta.dniPaciente || "--"}
+          </div>
+          <div class="info-item">
+            <strong>Nombre:</strong> ${venta.nombrePaciente || "--"}
+          </div>
+          <div class="info-item">
+            <strong>Teléfono:</strong> ${venta.telefonoPaciente || "--"}
+          </div>
+        `;
+        } else {
+          pacienteInfo.innerHTML =
+            '<div class="no-patient"><strong>Cliente no registrado</strong> - Venta directa sin datos del cliente</div>';
+        }
+
+        card.appendChild(pacienteInfo);
+
+        // Botón de detalles
+        const toggleBtn = document.createElement("button");
+        toggleBtn.className = "toggle-button";
+        toggleBtn.innerHTML = `
+        <span>Ver más detalles</span>
+        <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
+          <path d="M1 1.5L6 6.5L11 1.5" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      `;
+        toggleBtn.onclick = function () {
+          toggleDetails(this);
+        };
+        card.appendChild(toggleBtn);
+
+        // Sección de detalles
+        const hiddenSection = document.createElement("div");
+        hiddenSection.className = "hidden-section";
+
+        // Tabla de productos
+        if (venta.productos && venta.productos.length > 0) {
+          const tableHtml = `
+          <h3 style="margin: 1rem 0; color: #1565c0;">Productos Vendidos</h3>
+          <table class="products-table">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+                <th>Precio Unit.</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${venta.productos
+                .map(
+                  (p) => `
+                <tr>
+                  <td>${p.producto || "--"}</td>
+                  <td>${p.descripcion || "--"}</td>
+                  <td>${p.cantidad || "--"}</td>
+                  <td>S/${p.precioUnitario || "0.00"}</td>
+                  <td>S/${p.subtotal || "0.00"}</td>
+                </tr>
+              `
+                )
+                .join("")}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="4" class="total-label">Total:</td>
+                <td class="total-amount">S/${venta.total || "0.00"}</td>
+              </tr>
+            </tfoot>
+          </table>
+        `;
+          hiddenSection.innerHTML = tableHtml;
+        } else {
+          hiddenSection.innerHTML =
+            '<p style="text-align: center; color: #42a5f5; font-style: italic;">No hay productos registrados en esta venta</p>';
+        }
+
+        // Info adicional del paciente si existe
+        if (venta.dniPaciente) {
+          hiddenSection.innerHTML += `
+          <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed #bbdefb;">
+            <div class="info-item">
+              <strong>Forma de Pago:</strong> ${venta.formaPago || "--"}
+            </div>
+            <div class="info-item">
+              <strong>Estado:</strong> ${venta.estadoPago || "--"}
+            </div>
+            <div class="info-item">
+              <strong>Tipo de Venta:</strong> ${venta.tipoVenta || "--"}
+            </div>
+          </div>
+        `;
+        }
+
+        card.appendChild(hiddenSection);
+        return card;
+      }
+
+      function toggleDetails(button) {
+        const section = button.nextElementSibling;
+        const isVisible = section.classList.contains("active");
+
+        if (isVisible) {
+          section.classList.remove("active");
+          button.innerHTML =
+            '<span>Ver más detalles</span><svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 1.5L6 6.5L11 1.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>';
+        } else {
+          section.classList.add("active");
+          button.innerHTML =
+            '<span>Ocultar detalles</span><svg width="12" height="8" viewBox="0 0 12 8" fill="none"><path d="M1 6.5L6 1.5L11 6.5" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>';
+        }
+      }
+
+      // Iniciar carga cuando el script se ejecute
+      cargarHistorialVentas();
+    </script>
+
+    <style>
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </body>
+</html>

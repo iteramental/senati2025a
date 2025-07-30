@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="3.0"
+    xmlns="https://jakarta.ee/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+                        https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+    <persistence-unit name="ProyectoWeb01" transaction-type="RESOURCE_LOCAL">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        
+<!-- 
+	
+<class>far.jpa.ProductoJPA</class>
+<class>far.jpa.TipoProductoJPA</class>
+<class>far.jpa.TipoMedicamentoJPA</class>
+<class>far.jpa.OrigenProductoJPA</class>
+<class>far.jpa.ProveedorJPA</class>
+<class>far.jpa.LoteProductoJPA</class>
+<class>far.jpa.RecetaCabeceraJPA</class>
+<class>far.jpa.RecetaDetalleJPA</class>
+<class>far.jpa.MedicoJPA</class>
+<class>far.jpa.PacienteJPA</class>
+<class>far.jpa.FacturaEmitidaJPA</class>
+<class>far.jpa.DetalleFacturaEmitidaJPA</class>
+<class>far.jpa.PlanContableJPA</class>
+<class>far.jpa.CuentaContableJPA</class>
+<class>far.jpa.AjusteInventarioJPA</class>
+<class>far.jpa.FarmaceuticoJPA</class>
+<class>far.jpa.AuditoriaJPA</class>
+
+-->
+
+<exclude-unlisted-classes>false</exclude-unlisted-classes>
+
+        <properties>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/farmacia" />
+            <property name="jakarta.persistence.jdbc.user" value="root" />
+            <property name="jakarta.persistence.jdbc.password" value="" />
+            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
+
+            <property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>
+            <property name="eclipselink.logging.level" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
+            <property name="eclipselink.target-database" value="MySQL"/>
+        </properties>
+<!-- 
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <properties>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/farmacia" />
+            <property name="jakarta.persistence.jdbc.user" value="root" />
+            <property name="jakarta.persistence.jdbc.password" value="" />
+            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver" />
+
+            <property name="eclipselink.ddl-generation" value="create-or-extend-tables"/>
+            <property name="eclipselink.logging.level" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
+            <property name="eclipselink.target-database" value="MySQL"/>
+        </properties>
+-->
+
+    </persistence-unit>
+</persistence>
